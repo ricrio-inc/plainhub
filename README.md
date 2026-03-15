@@ -15,7 +15,7 @@ An online notepad backed by GitHub. Open, edit, save.
 
 ## Quick Start
 
-Visit **[plainhub.pages.dev](https://plainhub.pages.dev)** and click "Continue with GitHub".
+Visit **[plainhub.dev](https://plainhub.dev)** and click "Continue with GitHub".
 
 ## Coming Soon
 
@@ -34,8 +34,8 @@ PlainHub is an **online notepad backed by GitHub** — open, edit, save. Differe
 
 ## Links
 
-- **App**: [plainhub.pages.dev](https://plainhub.pages.dev)
-- **About**: [plainhub.pages.dev/about.html](https://plainhub.pages.dev/about.html)
+- **App**: [plainhub.dev](https://plainhub.dev)
+- **About**: [plainhub.dev/about.html](https://plainhub.dev/about.html)
 
 ## License
 
