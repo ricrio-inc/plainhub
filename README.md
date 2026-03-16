@@ -6,7 +6,6 @@ Open, edit, save — directly to your repo. No server, no database.
 
 ## Features
 
-- **Instant startup** — Loads in milliseconds, not seconds
 - **GitHub-backed** — All files stay in your repository
 - **CLI** — Open files from your terminal: `plainhub open <file> -r <repo>`
 - **MCP Server** — Control from AI IDE (Claude Code, Cursor) via natural language
@@ -49,12 +48,6 @@ Then say: *"Open the README in owner/repo on PlainHub"*
 github.dev is a full-featured editor — great for serious coding sessions.
 
 PlainHub is a **notepad backed by GitHub** — open, edit, save. Different tools for different moments.
-
-| | PlainHub | github.dev |
-|---|---------|------------|
-| Best for | Quick edits | Deep coding |
-| Startup | Milliseconds | Seconds |
-| AI IDE control | MCP Server | — |
 
 ## Links
 
