@@ -1,36 +1,60 @@
 # PlainHub
 
-**Your files, your repo, your control.**
+**GitHub-native notepad. AI-ready.**
 
-An online notepad backed by GitHub. Open, edit, save.
+Open, edit, save — directly to your repo. No server, no database.
 
 ## Features
 
 - **Instant startup** — Loads in milliseconds, not seconds
-- **GitHub OAuth** — One-click sign in, no token setup
-- **PWA** — Install as an app, works on mobile
+- **GitHub-backed** — All files stay in your repository
+- **CLI** — Open files from your terminal: `plainhub open <file> -r <repo>`
+- **MCP Server** — Control from AI IDE (Claude Code, Cursor) via natural language
 - **Markdown preview** — Live preview as you type
 - **Dark / Light theme** — Automatic or manual switching
-- **Deep linking** — Share file URLs with colleagues
+- **Deep linking** — Share file URLs with custom settings
+- **PWA** — Install as an app, works on mobile
 
 ## Quick Start
 
-Visit **[plainhub.dev](https://plainhub.dev)** and click "Continue with GitHub".
+### Web
 
-## Coming Soon
+Visit **[plainhub.dev](https://plainhub.dev)** and sign in with GitHub.
 
-- **CLI** — Open files from your terminal: `plainhub open <file> -r <owner/repo>`
-- **MCP Server** — Control PlainHub from AI agents and editors
+### CLI
+
+```bash
+npm install -g plainhub
+plainhub auth --from-gh
+plainhub open README.md -r owner/repo
+```
+
+### MCP Server
+
+```bash
+npm install -g plainhub
+claude mcp add plainhub -- plainhub-mcp
+```
+
+Then say: *"Open the README in owner/repo on PlainHub"*
+
+## Documentation
+
+- **[User Guide](docs/USER_GUIDE.md)** — Editor features and shortcuts
+- **[CLI Reference](docs/CLI.md)** — Commands and options
+- **[MCP Server Setup](docs/MCP_SERVER.md)** — AI IDE integration
 
 ## PlainHub & github.dev
 
 github.dev is a full-featured editor — great for serious coding sessions.
 
-PlainHub is an **online notepad backed by GitHub** — open, edit, save. Different tools for different moments.
+PlainHub is a **notepad backed by GitHub** — open, edit, save. Different tools for different moments.
 
 | | PlainHub | github.dev |
 |---|---------|------------|
 | Best for | Quick edits | Deep coding |
+| Startup | Milliseconds | Seconds |
+| AI IDE control | MCP Server | — |
 
 ## Links
 
