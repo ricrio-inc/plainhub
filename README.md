@@ -19,7 +19,7 @@ Open, edit, save — directly to your repo. No server, no database.
 - **Undo / Redo** — Full edit history
 - **Line numbers, auto-indent, line wrapping** — Configurable
 - **Whitespace visualization** — Toggle invisible characters
-- **Keyboard shortcuts** — Vim-like efficiency
+- **Keyboard shortcuts** — VS Code-style shortcuts (Ctrl+S, Ctrl+Z, etc.)
 
 ### File Management
 
