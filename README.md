@@ -1,18 +1,45 @@
 # PlainHub
 
+[日本語](docs/README_ja.md)
+
 **GitHub-native notepad. AI-ready.**
+
+<!-- ![PlainHub Demo](docs/images/hero.gif) -->
+
+[![npm version](https://img.shields.io/npm/v/plainhub)](https://www.npmjs.com/package/plainhub)
 
 Open, edit, save — directly to your repo. No server, no database.
 
 ## Features
 
-- **GitHub-backed** — All files stay in your repository
-- **CLI** — Open files from your terminal: `plainhub open <file> -r <repo>`
-- **MCP Server** — Control from AI IDE (Claude Code, Cursor) via natural language
-- **Markdown preview** — Live preview as you type
-- **Dark / Light theme** — Automatic or manual switching
-- **Deep linking** — Share file URLs with custom settings
-- **PWA** — Install as an app, works on mobile
+### Editor
+
+- **Markdown 3-mode editing** — Code / Visual (WYSIWYG) / Preview
+- **Syntax highlighting** — Markdown, JSON, YAML, and more
+- **Undo / Redo** — Full edit history
+- **Line numbers, auto-indent, line wrapping** — Configurable
+- **Whitespace visualization** — Toggle invisible characters
+- **Keyboard shortcuts** — Vim-like efficiency
+
+### File Management
+
+- **Create / rename / duplicate / delete** files and folders
+- **File history** — View past versions with diff
+- **Sync & conflict resolution** — Real-time sync with GitHub
+- **Image paste** — Paste images directly, auto-upload to repo
+- **Cross-repo search** — Search across all your repositories
+
+### Integration
+
+- **CLI** — `plainhub open <file> -r <repo>` from your terminal
+- **MCP Server** — Control from AI IDE (Claude Code, Cursor, VS Code)
+- **Deep linking** — Share URLs with theme, font size, line number settings
+- **PWA** — Install as native app on desktop and mobile
+
+### Design
+
+- **Dark / Light theme** — Automatic or manual
+- **Mobile responsive** — Full-featured on phone and tablet
 
 ## Quick Start
 
@@ -28,7 +55,7 @@ plainhub auth --from-gh
 plainhub open README.md -r owner/repo
 ```
 
-### MCP Server
+### MCP Server (AI IDE)
 
 ```bash
 npm install -g plainhub
