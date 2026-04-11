@@ -1,16 +1,13 @@
 # PlainHub
 
-[English](../README.md)
+**Frontend for GitHub.**
 
-**GitHub ネイティブのメモ帳。AI 対応。**
-
-<!-- ![PlainHub デモ](images/hero.gif) -->
-
+[![PlainHub を試す](https://img.shields.io/badge/PlainHub%20を試す-plainhub.dev-blue?style=for-the-badge)](https://plainhub.dev)
 [![npm version](https://img.shields.io/npm/v/plainhub)](https://www.npmjs.com/package/plainhub)
 
 ファイルを開いて、編集して、保存。すべて GitHub リポジトリに直接。サーバーもデータベースも不要。
 
-## 機能
+## 特徴
 
 ### エディタ
 
@@ -41,6 +38,16 @@
 - **ダーク / ライトテーマ** — 自動または手動切替
 - **モバイル対応** — スマホ・タブレットでもフル機能
 
+## ドキュメント
+
+- **[ユーザーガイド](USER_GUIDE.md)** — エディタ機能とショートカット
+- **[特徴](FEATURES.md)** — 目玉機能、データ主権、エンタープライズ
+- **[ユースケース](USE_CASES.md)** — PlainHub の活用シーン
+- **[CLI リファレンス](CLI.md)** — ターミナルからの操作
+- **[MCP Server](MCP_SERVER.md)** — AI IDE 連携
+- **[FAQ](FAQ.md)** — よくある質問とトラブルシューティング
+- **[English Documentation](../)** — English docs
+
 ## クイックスタート
 
 ### Web
@@ -62,24 +69,16 @@ npm install -g plainhub
 claude mcp add plainhub -- plainhub-mcp
 ```
 
-あとは AI に話しかけるだけ: *「owner/repo の README を PlainHub で開いて」*
+AI に話しかけるだけ: *「owner/repo の README を PlainHub で開いて」*
 
-## ドキュメント
+## コミュニティ
 
-- **[ユーザーガイド](USER_GUIDE.md)** — エディタ機能とショートカット
-- **[CLI リファレンス](CLI.md)** — コマンドとオプション
-- **[MCP Server セットアップ](MCP_SERVER.md)** — AI IDE 連携
-
-## PlainHub と github.dev
-
-github.dev はフル機能のエディタ — 本格的なコーディングセッションに最適。
-
-PlainHub は **GitHub をバックエンドにしたメモ帳** — 開いて、編集して、保存。それぞれ違う場面で使うツール。
+- [Issue を報告する](https://github.com/ricrio-inc/plainhub/issues)
 
 ## リンク
 
-- **アプリ**: [plainhub.dev](https://plainhub.dev)
-- **About**: [plainhub.dev/about.html](https://plainhub.dev/about.html)
+- **アプリ**: [app.plainhub.dev](https://app.plainhub.dev)
+- **About**: [plainhub.dev](https://plainhub.dev)
 
 ## ライセンス
 

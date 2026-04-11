@@ -1,11 +1,12 @@
 # PlainHub
 
-[日本語](docs/README_ja.md)
+**Frontend for GitHub.**
 
-**GitHub-native notepad. AI-ready.**
+[日本語ドキュメント](docs/ja/README.md)
 
 <!-- ![PlainHub Demo](docs/images/hero.gif) -->
 
+[![Try PlainHub](https://img.shields.io/badge/Try%20PlainHub-plainhub.dev-blue?style=for-the-badge)](https://plainhub.dev)
 [![npm version](https://img.shields.io/npm/v/plainhub)](https://www.npmjs.com/package/plainhub)
 
 Open, edit, save — directly to your repo. No server, no database.
@@ -67,19 +68,21 @@ Then say: *"Open the README in owner/repo on PlainHub"*
 ## Documentation
 
 - **[User Guide](docs/USER_GUIDE.md)** — Editor features and shortcuts
-- **[CLI Reference](docs/CLI.md)** — Commands and options
-- **[MCP Server Setup](docs/MCP_SERVER.md)** — AI IDE integration
+- **[Features](docs/FEATURES.md)** — Key features, data ownership, enterprise
+- **[Use Cases](docs/USE_CASES.md)** — When and how to use PlainHub
+- **[CLI Reference](docs/CLI.md)** — Terminal commands and options
+- **[MCP Server](docs/MCP_SERVER.md)** — AI IDE integration
+- **[FAQ](docs/FAQ.md)** — Troubleshooting and common questions
+- **[日本語ドキュメント](docs/ja/)** — Japanese documentation
 
-## PlainHub & github.dev
+## Community
 
-github.dev is a full-featured editor — great for serious coding sessions.
-
-PlainHub is a **notepad backed by GitHub** — open, edit, save. Different tools for different moments.
+- [Report an Issue](https://github.com/ricrio-inc/plainhub/issues)
 
 ## Links
 
-- **App**: [plainhub.dev](https://plainhub.dev)
-- **About**: [plainhub.dev/about.html](https://plainhub.dev/about.html)
+- **App**: [app.plainhub.dev](https://app.plainhub.dev)
+- **About**: [plainhub.dev](https://plainhub.dev)
 
 ## License
 

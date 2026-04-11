@@ -1,6 +1,23 @@
-# PlainHub MCP Server
+> **[plainhub.dev](https://plainhub.dev)** — Try PlainHub now | [日本語](ja/MCP_SERVER.md)
 
-Control PlainHub from AI IDEs using natural language.
+# PlainHub MCP Server — Control GitHub from AI IDEs
+
+An MCP Server that lets you manage GitHub files using natural language from Claude Code, Cursor, and VS Code.
+
+---
+
+## What Is an MCP Server?
+
+With an MCP (Model Context Protocol) Server, you can control PlainHub using natural language from AI IDEs like Claude Code, Cursor, and VS Code. No need to memorize commands.
+
+```
+"Open the README in owner/repo on PlainHub"
+"I want to browse this repository"
+"Show me the latest commit diff"
+"Check my authentication status"
+```
+
+---
 
 ## Setup
 
@@ -11,86 +28,102 @@ npm install -g plainhub
 claude mcp add plainhub -- plainhub-mcp
 ```
 
-### Claude Desktop
-
-Add to `claude_desktop_config.json`:
+Or add directly to `~/.claude/settings.json`:
 
 ```json
 {
   "mcpServers": {
     "plainhub": {
       "command": "npx",
-      "args": ["plainhub-mcp"]
+      "args": ["-y", "plainhub-mcp"]
     }
   }
 }
 ```
 
-### Cursor / Other MCP Clients
+### Cursor
 
-Any MCP-compatible client can use PlainHub. Run the server via stdio:
+Add to `.cursor/mcp.json`:
 
-```bash
-npx plainhub-mcp
+```json
+{
+  "mcpServers": {
+    "plainhub": {
+      "command": "plainhub-mcp"
+    }
+  }
+}
 ```
 
-## Tools
+### VS Code
+
+Add to your VS Code MCP settings:
+
+```json
+{
+  "mcpServers": {
+    "plainhub": {
+      "command": "npx",
+      "args": ["-y", "plainhub-mcp"]
+    }
+  }
+}
+```
+
+---
+
+## MCP Server Tools
 
 | Tool | Description |
 |------|-------------|
 | `plainhub_open` | Open a file or change editor settings |
-| `plainhub_browse` | Open repository with file browser |
-| `plainhub_auth` | Save or manage GitHub PAT |
+| `plainhub_diff` | View a commit diff in PlainHub |
+| `plainhub_browse` | Open the repository file browser |
+| `plainhub_auth` | Save a GitHub PAT |
 | `plainhub_auth_status` | Check authentication status |
 
-### `plainhub_open`
+---
 
-Open a file in PlainHub. Can also change editor settings without opening a specific file.
+## Claude Code Integration
 
-**Parameters:** `repo`, `path`, `branch`, `line`, `theme`, `fontSize`, `preview`, `sidebar`, `lineNumbers`, `whitespace`, `noAuth`
+Combine Claude Code and PlainHub to cover both code and documentation.
 
-### `plainhub_browse`
+### Workflow Examples
 
-Open a repository with the file browser sidebar.
+- **Code + Docs**: Fix code in Claude Code → Update documentation in PlainHub → Git commit both
+- **Bug Investigation**: Investigate root cause in Claude Code → Visually review changes with `plainhub diff`
+- **Team Collaboration**: Non-engineers write meeting notes in PlainHub → Engineers reference them in Claude Code
 
-**Parameters:** `repo`
+> Claude Code is where you write code. PlainHub is where you write documents. MCP/CLI connects the two seamlessly.
 
-### `plainhub_auth`
-
-Save a GitHub Personal Access Token. If called without a token, opens the GitHub token settings page.
-
-**Parameters:** `token` (optional)
-
-### `plainhub_auth_status`
-
-Check if a token is saved. Returns the masked token or "not authenticated".
-
-## Examples
-
-```
-"Open the README in owner/repo on PlainHub"
-→ plainhub_open { repo: "owner/repo", path: "README.md" }
-
-"Switch to light mode"
-→ plainhub_open { theme: "light" }
-
-"Set font size to 20"
-→ plainhub_open { fontSize: 20 }
-
-"Browse owner/repo"
-→ plainhub_browse { repo: "owner/repo" }
-
-"Open src/app.ts on the develop branch"
-→ plainhub_open { repo: "owner/repo", path: "src/app.ts", branch: "develop" }
-```
+---
 
 ## Authentication
 
-The MCP server automatically uses the saved token from `~/.config/plainhub/token`. To set up authentication:
+The MCP Server shares the same credentials as the CLI.
 
 ```bash
-# From terminal (before using MCP)
+# Import auth from gh CLI (recommended)
 plainhub auth --from-gh
+
+# Or set a PAT manually
+plainhub auth
 ```
 
-Or use the `plainhub_auth` tool from your AI IDE to save a token directly.
+Tokens are saved to `~/.config/plainhub/token` (permissions `0600`).
+
+---
+
+## Troubleshooting
+
+### MCP Server Not Recognized
+
+1. Verify `plainhub-mcp` is installed: `which plainhub-mcp`
+2. Restart Claude Code / Cursor
+3. Check the JSON syntax in your settings file
+
+### Authentication Errors
+
+1. Check authentication status with `plainhub auth --status`
+2. Re-authenticate with `plainhub auth --from-gh`
+3. Ensure your GitHub PAT includes the `repo` scope

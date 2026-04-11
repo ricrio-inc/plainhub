@@ -1,199 +1,196 @@
-# PlainHub User Guide
+> **[plainhub.dev](https://plainhub.dev)** — Try PlainHub now | [日本語](ja/USER_GUIDE.md)
 
-An online notepad backed by GitHub. Open, edit, save — your text files stay in your repository.
+# PlainHub User Guide — Edit GitHub Files in Your Browser
 
-## Getting Started
-
-### 1. Sign In
-
-1. Visit [plainhub.dev](https://plainhub.dev)
-2. Click **Sign in with GitHub**
-3. Authorize PlainHub on the GitHub consent screen
-
-You can also use a **Personal Access Token (PAT)** instead of OAuth:
-- Click "Use a token instead"
-- Paste your token (`ghp_...` or `github_pat_...`)
-- Check "Remember on this device" to stay signed in
-
-### 2. Select a Repository
-
-After signing in, click the repository name in the sidebar header to open the repository selector.
-
-- **Search**: Type to filter your repositories
-- **Create new**: Click "＋ Create new repository" at the top
-  - Enter a name and choose Private/Public
-- **Switch**: Click any repository to switch to it
-
-### 3. Create a File
-
-- Click the **＋** button in the sidebar header
-- Enter a file name (e.g., `notes.md`, `memo.txt`)
-- The file is created and opened automatically
-
-You can also right-click a folder and select **New File**.
-
-### 4. Edit and Save
-
-- Edit your file in the editor
-- **Auto-save**: Changes are saved automatically when you leave the editor
-- **Manual save**: Press `Ctrl+S` for immediate save
-- Every save creates a Git commit in your repository
+PlainHub is an AI-powered online editor that lets you edit GitHub repository files directly in your browser.
 
 ---
 
-## Editor Features
+## What is PlainHub
 
-### Toolbar Buttons
+PlainHub is an online text editor that lets you edit files in your GitHub repositories directly from the browser.
 
-| Button | Function |
-|--------|----------|
-| ↶ / ↷ | Undo / Redo |
-| ¶ | Toggle whitespace characters |
-| 🔢 | Toggle line numbers |
-| ⇥ | Toggle auto-indent |
-| ↩ | Toggle line wrapping |
-| 👁 | Toggle Markdown preview (`.md` files) |
-| 🌙 / ☀ | Switch Dark / Light theme |
-| 🕐 | View file history |
-| ⚙️ | Settings |
-| 🔄 | Pull latest from remote |
-| ⋯ | More tools |
+- **Complete Data Ownership** — All files are stored in your GitHub repository. No proprietary servers or databases
+- **100% Client-Side** — Everything runs in your browser. No data is sent to PlainHub servers
+- **Automatic Version Control** — Every save creates a Git commit. View change history on GitHub
+- **Multi-Device** — Sign in and access from any device
+- **Lightweight** — Smoothly edit even files with tens of thousands of lines
+
+### Who is it for
+
+- Engineers and non-engineers who want to use GitHub and AI for document management
+- Anyone who wants to quickly edit and save files from a browser
+- Users of AI tools (Claude Code / Cursor) who want to operate GitHub files
+
+---
+
+## Getting Started
+
+### Web
+
+1. Visit [plainhub.dev](https://plainhub.dev)
+2. Click **Sign in with GitHub**
+3. Select a repository and start editing
+
+### CLI
+
+```bash
+npm install -g plainhub
+plainhub auth --from-gh
+plainhub open README.md -r your/repo
+```
+
+### MCP Server (Claude Code)
+
+Add to `~/.claude/settings.json`:
+
+```json
+{
+  "mcpServers": {
+    "plainhub": {
+      "command": "npx",
+      "args": ["-y", "plainhub-mcp"]
+    }
+  }
+}
+```
+
+---
+
+## Editor
+
+### Three Editor Modes
+
+| Mode | Description | Use Case |
+|------|-------------|----------|
+| **Code** | Plain text / source code view (CodeMirror) | Code editing, text editing |
+| **Preview** | Markdown rendered view | Document reading |
+| **Visual** | WYSIWYG editing (ProseMirror) | Edit without knowing Markdown — like Word |
+
+### Image Paste
+
+Paste screenshots directly from clipboard with Ctrl+V. Great for creating documents with visual evidence.
 
 ### Keyboard Shortcuts
 
 | Shortcut | Action |
 |----------|--------|
-| `Ctrl+S` | Save immediately |
-| `Ctrl+B` | Toggle sidebar |
-| `Ctrl+Z` | Undo |
-| `Ctrl+Y` | Redo |
-| `Ctrl+L` | Show login dialog |
-| `Ctrl+Home` | Jump to top |
-| `Ctrl+End` | Jump to bottom |
-| `Escape` | Close dialog / menu |
-
-### Markdown Preview
-
-For `.md` files, click the **👁** button to open a live preview panel alongside the editor. The preview updates as you type and supports:
-
-- Headings, bold, italic
-- Links and images
-- Code blocks with syntax highlighting
-- Tables
-- Lists (ordered / unordered)
-- Blockquotes
-
-### Image Paste
-
-In Markdown files, paste an image from your clipboard. PlainHub automatically:
-1. Uploads the image to your repository (`images/` folder)
-2. Inserts the Markdown image link in the editor
+| Ctrl+S | Save instantly (Git commit) |
+| Ctrl+B | Toggle sidebar |
+| Ctrl+H | Focus Mode (hide UI elements) |
+| Ctrl+Z / Ctrl+Y | Undo / Redo |
+| Ctrl+L | Select line |
+| Ctrl+Home / End | Jump to beginning / end of file |
+| Alt+Z | Toggle line wrapping |
 
 ---
 
-## File Operations
+## AI Panel
 
-### From Context Menu (Right-Click)
+An AI chat feature integrated into the editor. Uses the Claude API to let you control the editor with natural language.
 
-| Action | Description |
-|--------|-------------|
-| **Rename** | Change the file name |
-| **Copy** | Duplicate the file |
-| **Delete** | Remove the file (with confirmation) |
+### What You Can Do
 
-### File History
+```
+Content operations:
+  "Convert this paragraph to bullet points"
+  "Summarize this file"
+  "Translate to Japanese"
+  "Create a new README with a project overview"
 
-Click **🕐** to view the commit history of the current file. Each entry shows the date, commit message, and SHA. Click any commit to view that historical version (read-only).
+UI operations:
+  "Switch to dark mode"
+  "Increase the font size"
+  "Close the sidebar"
+  "Switch to preview mode"
+```
 
-### Pull Latest
+### Control GitHub with Natural Language
 
-Click **🔄** to check for remote changes. If someone else updated the file, PlainHub detects the conflict and offers:
-1. **Keep your edits** — preserve your unsaved changes
-2. **Use latest version** — discard local changes and load the remote version
-3. **Decide later** — defer the decision
+Execute GitHub-specific operations from the AI panel using natural language. No need to learn the GitHub UI.
+
+| GitHub Operation | With PlainHub |
+|-----------------|---------------|
+| Navigate to a repo and find a file | "Open README.md" |
+| Switch between repositories | "Switch to design-docs" |
+| Create a new repository | "Create a repo called my-notes" |
+| Create a new file and commit | "Create docs/memo.md" |
+| Create an Issue | "Create a bug report Issue" |
+| Comment on an Issue | "Comment on Issue #1 that it's resolved" |
+| Close an Issue | "Close Issue #1" |
+
+### Available Models
+
+| Model | Characteristics |
+|-------|----------------|
+| **Opus** | Highest performance. Best for advanced analysis and long-form writing |
+| **Sonnet** | Balanced. Best for code editing and complex suggestions |
+| **Haiku** (default) | Fast and low-cost. Best for everyday editing and simple questions |
+
+Switch between models with one click in the settings.
+
+### Features
+
+- **BYOK** (Bring Your Own Key) — Use your own Anthropic API key
+- Automatically provides the current file content as context
+- Diff view for proposed edits — review changes before applying
+- Streaming response support
 
 ---
 
 ## Search
 
-Use the search bar in the sidebar to find files.
+### Three Search Modes
 
-- **By name** (default): Filters the file list as you type
-- **By content**: Searches inside file contents (toggle via radio buttons)
+| Mode | Description |
+|------|-------------|
+| **Name** | Search by file name |
+| **Content** | Search within file contents |
+| **All repos** | Search across all repositories |
 
----
+### Cross-Repository Search (All repos)
 
-## Settings
+Search across all your GitHub repositories in one place.
 
-Click **⚙️** to open settings:
+- **Scope**: All repositories accessible to the logged-in user
+- **Method**: Simultaneous file name and content search (GitHub Search API + Trees API)
+- **Results**: Grouped by repository
+- **Filtering**: Filter results by specific repository
 
-- **Light theme**: Switch to light mode
-- **Auto-scroll to bottom**: Automatically scroll to the end when opening a file (useful for logs and diaries)
+#### Examples
 
-### Persistent Preferences
-
-PlainHub remembers your settings across sessions:
-- Theme (dark/light)
-- Font size
-- Line numbers on/off
-- Whitespace display
-- Line wrapping
-- Sidebar visibility
-- Last opened repository and file
+- Find information across documents scattered in multiple repositories
+- Search for specific keywords (API names, config values) across projects
+- Instantly resolve "which repo was that file in?"
 
 ---
 
-## URL Parameters (Deep Linking)
+## Repository Management
 
-Share a direct link to a specific file with custom settings:
-
-```
-https://plainhub.dev/?repo=owner/myrepo&path=docs/guide.md&preview=on
-```
-
-| Parameter | Values | Description |
-|-----------|--------|-------------|
-| `repo` | `owner/name` | Open a specific repository |
-| `path` | `file/path` | Open a specific file |
-| `line` | number | Jump to a line |
-| `preview` | `on` / `off` | Enable Markdown preview |
-| `theme` | `dark` / `light` | Set theme |
-| `fontSize` | `10`–`32` | Set font size |
-| `lineNumbers` | `on` / `off` | Show line numbers |
-| `whitespace` | `on` / `off` | Show whitespace |
-| `sidebar` | `on` / `off` | Show/hide sidebar |
+- **Switch repositories**: One-click switching from the sidebar header
+- **Create repositories**: Create new repositories from the browser (Public/Private)
+- **File operations**: Create, edit, and save files directly in the browser
+- **Context menu**: Duplicate files, copy paths, delete, and more
 
 ---
 
-## Supported File Types
+## Security
 
-| Type | Behavior |
-|------|----------|
-| `.md`, `.txt`, `.json`, `.yaml`, `.js`, `.py`, etc. | Editable with syntax highlighting |
-| `.png`, `.jpg`, `.gif`, `.webp`, `.svg` | Image preview |
-| `.pdf` | PDF viewer |
-| Other binary files | "Cannot display" message |
+- **Authentication**:
+  - Web UI: Sign in securely via GitHub's official OAuth flow (tokens stored in browser localStorage)
+  - CLI / MCP Server: Stored locally at `~/.config/plainhub/token` (permissions 0600, owner read/write only)
+- **Code integrity verification**: Verify that running code matches the GitHub repository via SHA-256 hash
 
 ---
 
-## Read-Only Mode
+## PWA Support
 
-If you don't have write permission to a repository, PlainHub automatically enters read-only mode. A banner is displayed and editing is disabled. You can still browse and read files.
-
----
-
-## Mobile
-
-PlainHub works on mobile browsers:
-- Tap **☰** to open the file list
-- Tap **🔐** to access login/logout
-- All features work on touch devices
+- **Offline support**: Works offline via Service Worker
+- **Add to home screen**: Install as an app on mobile and desktop
+- **Native app feel**: Runs without the browser address bar
 
 ---
 
-## Privacy & Security
+## Supported Browsers
 
-- **No server**: PlainHub runs entirely in your browser
-- **No database**: All files are stored in your GitHub repository
-- **Local credentials**: Authentication tokens are stored only in your browser
-- **Direct API**: All operations go directly to the GitHub API — no intermediary servers
+Chrome 90+, Firefox 88+, Safari 14+, Edge 90+
