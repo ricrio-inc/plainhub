@@ -1,11 +1,13 @@
 # PlainHub
 
-**Frontend for GitHub.**
+**Frontend for GitHub.** GitHub のファイルをブラウザで直接編集。サーバーもデータベースも不要。
+
+<!-- ![PlainHub デモ](../images/hero.gif) -->
 
 [![PlainHub を試す](https://img.shields.io/badge/PlainHub%20を試す-plainhub.dev-blue?style=for-the-badge)](https://plainhub.dev)
 [![npm version](https://img.shields.io/npm/v/plainhub)](https://www.npmjs.com/package/plainhub)
 
-ファイルを開いて、編集して、保存。すべて GitHub リポジトリに直接。サーバーもデータベースも不要。
+[English Documentation](../)
 
 ## 特徴
 

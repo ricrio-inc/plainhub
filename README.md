@@ -1,15 +1,13 @@
 # PlainHub
 
-**Frontend for GitHub.**
-
-[日本語ドキュメント](docs/ja/README.md)
+**Frontend for GitHub.** Edit GitHub files directly in your browser — no server, no database.
 
 <!-- ![PlainHub Demo](docs/images/hero.gif) -->
 
 [![Try PlainHub](https://img.shields.io/badge/Try%20PlainHub-plainhub.dev-blue?style=for-the-badge)](https://plainhub.dev)
 [![npm version](https://img.shields.io/npm/v/plainhub)](https://www.npmjs.com/package/plainhub)
 
-Open, edit, save — directly to your repo. No server, no database.
+[日本語ドキュメント](docs/ja/README.md)
 
 ## Features
 
