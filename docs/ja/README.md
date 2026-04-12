@@ -5,7 +5,7 @@
 [![PlainHub を試す](https://img.shields.io/badge/PlainHub%20を試す-plainhub.dev-blue?style=for-the-badge)](https://plainhub.dev)
 [![npm version](https://img.shields.io/npm/v/plainhub)](https://www.npmjs.com/package/plainhub)
 
-[English Documentation](../)
+[English Documentation](../../README.md)
 
 PlainHub は、GitHub を誰でも簡単に使えるようにする AI 駆動オンラインエディタです。
 Git の知識は不要。ファイルを開いて、編集して、保存。すべて GitHub に直接。
@@ -74,7 +74,7 @@ AI に話しかけるだけ: *「owner/repo の README を PlainHub で開いて
 - **[CLI リファレンス](CLI.md)** — ターミナルからの操作
 - **[MCP Server](MCP_SERVER.md)** — AI IDE 連携
 - **[FAQ](FAQ.md)** — よくある質問とトラブルシューティング
-- **[English Documentation](../)** — English docs
+- **[English Documentation](../../README.md)** — English docs
 
 ## コミュニティ
 
