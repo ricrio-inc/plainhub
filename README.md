@@ -9,6 +9,10 @@
 
 [日本語ドキュメント](docs/ja/README.md)
 
+PlainHub is an online editor that makes GitHub simple for everyone.
+Open, edit, save — directly to your repo. No Git knowledge required.
+Control GitHub with natural language: just tell the AI what you want.
+
 ## Features
 
 ### Editor
