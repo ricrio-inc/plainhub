@@ -9,6 +9,8 @@
 
 [日本語ドキュメント](docs/ja/README.md)
 
+> **⭐ If PlainHub helps you, please star this repo — your support directly powers new features.**
+
 PlainHub is an AI-driven online editor that makes GitHub simple for everyone.
 No Git knowledge required. Open, edit, save — directly to your repo.
 Handles huge files with ease. Control GitHub with natural language — just tell the AI what you want.
