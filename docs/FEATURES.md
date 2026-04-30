@@ -18,6 +18,40 @@ PlainHub has AI built right into the editor. Through MCP/CLI integration, it can
 
 ---
 
+## Talk to Your Whole Repository — AI Reads, You Discuss
+
+Beyond the file you have open, **AI reads your entire repository to answer**. Code, docs, commit history — all accessible from AI. A Claude Code-like experience, right in your browser.
+
+```
+"How is auth implemented in this repo?"
+  → AI finds and reads relevant files, summarizes structure and approach
+
+"What did I work on last week?"
+  → AI checks recent commits, summarizes the changes
+
+"How has app/index.html evolved?"
+  → AI traces the history and explains the flow
+
+"Show me the 5 most recently updated files"
+  → AI extracts from commits and lists them
+```
+
+Edit the file in front of you with AI, *and* explore the whole repo with AI as a partner.
+
+**Brainstorm, then keep it**
+
+Bounce ideas off an AI that knows your repo, then save the result as a Markdown file. The conversation lives in Git. Reopen the file later and **pick up the discussion where you left off**. Not a chat that streams away — a workspace where thinking accumulates.
+
+```
+1. Open a new note (e.g., ideas/new-feature.md)
+2. Ask AI — it reads the repo and proposes with full context
+   "Given the existing features, let's design feature X together"
+3. Have AI summarize the discussion, save to file
+4. Open the same file the next day → AI reads the past discussion and continues
+```
+
+---
+
 ## Search Documents with Natural Language
 
 Cross-repository search powered by AI enables natural language queries (Coming Soon).
@@ -47,12 +81,13 @@ Upload documents (PDF, Word, Excel, etc.) directly to a GitHub repository via dr
 
 ---
 
-## Voice Commands — Control GitHub with Your Voice
+## Speak and Listen — Voice In, Voice Out
 
-The AI panel features push-to-talk voice input. Hold the mic button, speak, and release to automatically send your message to the AI.
+The AI panel features push-to-talk voice input and AI response read-aloud (TTS). **Speak, then listen back** — interact with AI on the move or while working, without staring at the screen.
 
-**Phase 1 (Shipped)**: Push-to-talk + Web Speech API
+**Phase 1 (Shipped)**: Push-to-talk + Web Speech API + TTS
 - Hold mic button → speak → release to auto-send → AI executes
+- AI response read-aloud (TTS) — 1x to 5x playback speed for "listen-while-doing"
 - Uses browser-native API (Web Speech API), zero additional cost
 - Supported on Chrome/Edge/Safari
 - Mobile (touch) support
@@ -60,8 +95,9 @@ The AI panel features push-to-talk voice input. Hold the mic button, speak, and 
 **Phase 2 (Coming Soon)**: High-Accuracy Speech Recognition
 - Whisper API (BYOK) support — precise recognition of technical terms
 
-**Phase 3 (Coming Soon)**: Conversation Mode
-- Continuous conversation mode (automatically listens for next voice input after AI responds)
+**Phase 3 (Coming Soon)**: Conversation Mode (Full Hands-Free)
+- Continuous conversation mode (auto-listens for next voice input after AI responds, no button press needed)
+- Wake-word support for fully hands-free interaction while driving, cooking, etc.
 
 ```
 Speak: "Summarize the meeting notes and create Issues for each TODO"
@@ -94,7 +130,7 @@ No PC, no IDE, no terminal needed. Just a browser.
 
 ## Idea Development — Brainstorm with AI as You Write
 
-Go beyond just jotting down ideas — develop them through conversation with AI. In PlainHub, your notes and AI live on the same screen.
+Go beyond just jotting down ideas — develop them through conversation with AI. In PlainHub, your notes and AI live on the same screen, and **AI proposes with awareness of your whole repository** (see "Talk to Your Whole Repository").
 
 ```
 1. Write down an idea (e.g., new service plan, article outline, business plan)
