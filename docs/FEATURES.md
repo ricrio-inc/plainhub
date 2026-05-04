@@ -87,7 +87,7 @@ The AI panel features push-to-talk voice input and AI response read-aloud (TTS).
 
 **Phase 1 (Shipped)**: Push-to-talk + Web Speech API + TTS
 - Hold mic button → speak → release to auto-send → AI executes
-- AI response read-aloud (TTS) — 1x to 5x playback speed for "listen-while-doing"
+- AI response read-aloud (TTS) — 1x to 3x playback speed for "listen-while-doing"
 - Uses browser-native API (Web Speech API), zero additional cost
 - Supported on Chrome/Edge/Safari
 - Mobile (touch) support
