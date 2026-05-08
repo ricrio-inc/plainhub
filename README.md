@@ -16,6 +16,14 @@ No Git knowledge required. Open, edit, save — directly to your repo.
 Handles huge files with ease. Control GitHub with natural language — just tell the AI what you want.
 For engineers and non-engineers alike, working together in the same place.
 
+## Why PlainHub
+
+- **GitHub-native** — All files stay in your GitHub repository. No proprietary server or database required.
+- **100% client-side** — Runs entirely in your browser. PlainHub never sees your data.
+- **BYOK (Bring Your Own Key)** — Use your own AI API keys (e.g., Anthropic Claude). Keys stay in your browser, never sent to PlainHub servers.
+- **AI for idea development** — Brainstorm, write, and edit alongside an AI assistant. Voice input and TTS read-aloud supported.
+- **Frontend for GitHub** — Like github.dev, but for non-engineers. A notepad with version control built in.
+
 ## Features
 
 ### Editor
