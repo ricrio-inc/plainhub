@@ -1,13 +1,13 @@
 # PlainHub
 
-**Frontend for GitHub.** Edit GitHub files directly in your browser — no server, no database.
+**Your notes, in your own GitHub.** A plain-text editor for your GitHub repos, with Markdown support. Every save is a Git commit, and AI helps you edit.
 
-<!-- ![PlainHub Demo](docs/images/hero.gif) -->
-
-[![Try PlainHub](https://img.shields.io/badge/Try%20PlainHub-plainhub.dev-blue?style=for-the-badge)](https://plainhub.dev)
+[![Try PlainHub](https://img.shields.io/badge/Try%20PlainHub-app.plainhub.dev-blue?style=for-the-badge)](https://app.plainhub.dev)
 [![npm version](https://img.shields.io/npm/v/plainhub)](https://www.npmjs.com/package/plainhub)
 
-[日本語ドキュメント](docs/ja/README.md)
+[Website](https://plainhub.dev) · ▶ [30-second intro (YouTube)](https://youtu.be/2ThRzBnGxoE) · [Documentation](#documentation) · [日本語ドキュメント](docs/ja/README.md)
+
+![PlainHub: write a note, it is saved as a commit, check the history, ask AI for an edit and apply it](docs/images/hero.gif)
 
 > **⭐ If PlainHub helps you, please star this repo — your support directly powers new features.**
 
@@ -18,8 +18,8 @@ For engineers and non-engineers alike, working together in the same place.
 
 ## Why PlainHub
 
-- **GitHub-native** — All files stay in your GitHub repository. No proprietary server or database required.
-- **100% client-side** — Runs entirely in your browser. PlainHub never sees your data.
+- **GitHub-native** — Your files are saved only in your own GitHub repository. PlainHub doesn't store them.
+- **File contents never pass through PlainHub's servers** — Reading and saving go directly between your browser and the GitHub API. Sign-in uses a small server step — see the [privacy policy](https://plainhub.dev/privacy).
 - **BYOK (Bring Your Own Key)** — Use your own AI API keys (e.g., Anthropic Claude). Keys stay in your browser, never sent to PlainHub servers.
 - **AI for idea development** — Brainstorm, write, and edit alongside an AI assistant. Voice input and TTS read-aloud supported.
 - **Frontend for GitHub** — Like github.dev, but for non-engineers. A notepad with version control built in.

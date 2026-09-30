@@ -18,7 +18,7 @@ PlainHub は、GitHub リポジトリのファイルをブラウザで直接編�
 
 ### データはどこに保存されますか？
 
-すべてのデータはユーザーの GitHub リポジトリに保存されます。PlainHub 独自のサーバやデータベースにデータは保存されません。PlainHub をやめても、データは GitHub にそのまま残ります。
+ファイルは、あなた自身の GitHub リポジトリに保存されます。PlainHub はファイルを保存しません（PlainHub が記録する情報は[プライバシーポリシー](https://plainhub.dev/ja/privacy)にあります）。PlainHub をやめても、データは GitHub にそのまま残ります。
 
 ### GitHub アカウントが必要ですか？
 
