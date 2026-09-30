@@ -18,7 +18,7 @@ Yes, PlainHub is free to use. Just visit [plainhub.dev](https://plainhub.dev) an
 
 ### Where is my data stored?
 
-All data is stored in your own GitHub repository. PlainHub does not store any data on its own servers or databases. Even if you stop using PlainHub, your data stays on GitHub.
+Your files are stored in your own GitHub repository. PlainHub doesn't store them (what PlainHub does record is in the [privacy policy](https://plainhub.dev/privacy)). Even if you stop using PlainHub, your data stays on GitHub.
 
 ### Do I need a GitHub account?
 
