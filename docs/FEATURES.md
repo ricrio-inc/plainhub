@@ -163,14 +163,14 @@ View, create, comment on, and close Issues — all from the AI panel while editi
 
 ## Data Ownership
 
-The most important design principle of PlainHub. Your data belongs 100% to your GitHub repository.
+The most important design principle of PlainHub. Your files are saved only in your own GitHub repository.
 
 ### Principles
 
-- **PlainHub stores zero data** — no proprietary servers or databases
+- **PlainHub doesn't store your files** — there is no PlainHub server or database that holds your files
 - **Data lives on GitHub** — all files are saved in your GitHub repository
 - **Your data survives PlainHub** — stored in standard Git format, easy to migrate to other services
-- **100% client-side** — direct communication between your browser and GitHub only
+- **File contents don't pass through PlainHub's servers** — reading and saving go directly between your browser and the GitHub API (what PlainHub does record: [privacy policy](https://plainhub.dev/privacy))
 
 ### Comparison with Other Services
 

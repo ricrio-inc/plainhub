@@ -1,6 +1,6 @@
 # PlainHub Documentation
 
-**Frontend for GitHub.** Edit GitHub files directly in your browser — no server, no database.
+**Your notes, in your own GitHub.** A plain-text editor for your GitHub repos, with Markdown support. Every save is a Git commit, and AI helps you edit.
 
 [![Try PlainHub](https://img.shields.io/badge/Try%20PlainHub-plainhub.dev-blue?style=for-the-badge)](https://plainhub.dev)
 
