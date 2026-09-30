@@ -11,7 +11,7 @@ PlainHub is an AI-powered online editor that lets you edit GitHub repository fil
 PlainHub is an online text editor that lets you edit files in your GitHub repositories directly from the browser.
 
 - **Data Ownership** — Your files are saved only in your own GitHub repository. PlainHub doesn't store them
-- **File contents stay between your browser and GitHub** — File contents are not sent to PlainHub's servers ([privacy policy](https://plainhub.dev/privacy))
+- **File contents never pass through PlainHub's servers** — Reading and saving go directly between your browser and the GitHub API ([privacy policy](https://plainhub.dev/privacy))
 - **Automatic Version Control** — Every save creates a Git commit. View change history on GitHub
 - **Multi-Device** — Sign in and access from any device
 - **Lightweight** — Smoothly edit even files with tens of thousands of lines

@@ -21,7 +21,7 @@ For engineers and non-engineers alike, working together in the same place.
 ## Why PlainHub
 
 - **GitHub-native** — Your files are saved only in your own GitHub repository. PlainHub doesn't store them.
-- **File contents stay between your browser and GitHub** — Reading and saving go directly to the GitHub API; file contents never pass through PlainHub's servers. Sign-in uses a small server step — see the [privacy policy](https://plainhub.dev/privacy).
+- **File contents never pass through PlainHub's servers** — Reading and saving go directly between your browser and the GitHub API. Sign-in uses a small server step — see the [privacy policy](https://plainhub.dev/privacy).
 - **BYOK (Bring Your Own Key)** — Use your own AI API keys (e.g., Anthropic Claude). Keys stay in your browser, never sent to PlainHub servers.
 - **AI for idea development** — Brainstorm, write, and edit alongside an AI assistant. Voice input and TTS read-aloud supported.
 - **Frontend for GitHub** — Like github.dev, but for non-engineers. A notepad with version control built in.
