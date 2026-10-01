@@ -88,9 +88,15 @@ Then say: *"Open the README in owner/repo on PlainHub"*
 - **[FAQ](docs/FAQ.md)** — Troubleshooting and common questions
 - **[日本語ドキュメント](docs/ja/)** — Japanese documentation
 
-## Community
+## Getting help
 
-- [Report an Issue](https://github.com/ricrio-inc/plainhub/issues)
+Stuck, found a bug, or have an idea? [Open an issue](https://github.com/ricrio-inc/plainhub/issues/new/choose) — no question is too small.
+
+- **❓ How do I…?** — ask how to do something
+- **🐞 Bug** — something doesn't work as expected
+- **💡 Idea** — suggest an improvement
+
+Replies may be drafted with the help of an AI assistant and are checked by the PlainHub team. Please don't post personal information, tokens, or private file contents — this repository is public.
 
 ## Links
 
