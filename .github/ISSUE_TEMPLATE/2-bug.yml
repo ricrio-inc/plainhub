@@ -1,0 +1,44 @@
+name: "🐞 Bug"
+description: Something doesn't work as expected.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. **Please don't paste personal information, tokens, or the contents of private files.** This repository is public.
+        If you think you lost data, don't close the tab — unsaved edits are usually kept on this device and restored when you reopen the file.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open …
+        2. Click …
+        3. See …
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: false
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and OS
+      placeholder: e.g. Chrome 140 on Windows 11 / Safari on iPhone
+    validations:
+      required: false
+  - type: input
+    id: version
+    attributes:
+      label: Version (bottom-right of the editor, if visible)
+    validations:
+      required: false

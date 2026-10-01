@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: User Guide
+    url: https://github.com/ricrio-inc/plainhub/blob/main/docs/USER_GUIDE.md
+    about: Features and shortcuts — many questions are answered here.
+  - name: FAQ
+    url: https://github.com/ricrio-inc/plainhub/blob/main/docs/FAQ.md
+    about: Troubleshooting and common questions.

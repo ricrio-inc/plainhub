@@ -79,7 +79,6 @@ Paste screenshots directly from clipboard with Ctrl+V. Great for creating docume
 | Ctrl+B | Toggle sidebar |
 | Ctrl+H | Focus Mode (hide UI elements) |
 | Ctrl+Z / Ctrl+Y | Undo / Redo |
-| Ctrl+L | Select line |
 | Ctrl+Home / End | Jump to beginning / end of file |
 | Alt+Z | Toggle line wrapping |
 
@@ -162,6 +161,19 @@ Search across all your GitHub repositories in one place.
 - Find information across documents scattered in multiple repositories
 - Search for specific keywords (API names, config values) across projects
 - Instantly resolve "which repo was that file in?"
+
+---
+
+## Files and Folders
+
+### Create a new file
+1. Move the mouse over the file list header (the repository name at the top of the sidebar). A **＋** button appears.
+2. Click **＋** and choose **📄 New File**.
+3. Type a name such as `memo.md` and press OK. The file is created as a commit in your repository and opens in the editor.
+
+To create a file inside a folder, right-click the folder and choose **📄 New File**. **📁 New Folder** works the same way.
+
+If the repository is empty, the sidebar shows a **＋ Create README.md** button that creates your first file.
 
 ---
 

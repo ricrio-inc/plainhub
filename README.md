@@ -26,6 +26,12 @@ For engineers and non-engineers alike, working together in the same place.
 
 ## Features
 
+### Edit from your phone
+
+Open a note on your phone, fix a line, and it is saved — as a commit in your own repository.
+
+<img src="docs/images/phone-edit.gif" width="300" alt="Editing a Markdown checklist on a phone: switch to Code, add a line, it shows Saved, and the commit appears in the GitHub history">
+
 ### Editor
 
 - **Markdown 3-mode editing** — Code / Visual (WYSIWYG) / Preview
@@ -88,9 +94,15 @@ Then say: *"Open the README in owner/repo on PlainHub"*
 - **[FAQ](docs/FAQ.md)** — Troubleshooting and common questions
 - **[日本語ドキュメント](docs/ja/)** — Japanese documentation
 
-## Community
+## Getting help
 
-- [Report an Issue](https://github.com/ricrio-inc/plainhub/issues)
+Stuck, found a bug, or have an idea? [Open an issue](https://github.com/ricrio-inc/plainhub/issues/new/choose) — no question is too small.
+
+- **❓ How do I…?** — ask how to do something
+- **🐞 Bug** — something doesn't work as expected
+- **💡 Idea** — suggest an improvement
+
+Replies may be drafted with the help of an AI assistant and are checked by the PlainHub team. Please don't post personal information, tokens, or private file contents — this repository is public.
 
 ## Links
 

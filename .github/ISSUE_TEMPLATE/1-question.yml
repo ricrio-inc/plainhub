@@ -1,0 +1,29 @@
+name: "❓ How do I…?"
+description: Ask how to do something in PlainHub. No question is too small.
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for asking — if you got stuck, others probably did too.
+        **Please don't paste personal information, tokens, or the contents of private files.** This repository is public.
+  - type: textarea
+    id: goal
+    attributes:
+      label: What are you trying to do?
+      placeholder: e.g. Create a new note inside a folder
+    validations:
+      required: true
+  - type: textarea
+    id: tried
+    attributes:
+      label: What did you try, and where did you get stuck?
+    validations:
+      required: false
+  - type: dropdown
+    id: device
+    attributes:
+      label: Device
+      options: [Desktop, Phone, Tablet]
+    validations:
+      required: false

@@ -1,0 +1,24 @@
+name: "💡 Idea"
+description: Suggest a feature or an improvement.
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve for you?
+      description: Tell us about the situation, not only the solution.
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: Your idea
+    validations:
+      required: false
+  - type: textarea
+    id: today
+    attributes:
+      label: How do you handle this today?
+      placeholder: e.g. I switch to another app, or I do it on GitHub directly
+    validations:
+      required: false

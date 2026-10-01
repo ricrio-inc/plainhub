@@ -18,6 +18,12 @@ Git の知識は不要。ファイルを開いて、編集して、保存。す�
 
 ## 特徴
 
+### スマホから直す
+
+スマホでノートを開いて1行直すと、そのまま保存されます。保存は、あなたのリポジトリへのコミットです。
+
+<img src="../images/phone-edit.gif" width="300" alt="スマホで Markdown のチェックリストを開き、Code に切り替えて1行足すと Saved と出て、GitHub の履歴にコミットが並ぶ">
+
 ### エディタ
 
 - **Markdown 3モード編集** — Code / Visual（WYSIWYG）/ Preview
@@ -80,9 +86,15 @@ AI に話しかけるだけ: *「owner/repo の README を PlainHub で開いて
 - **[FAQ](FAQ.md)** — よくある質問とトラブルシューティング
 - **[English Documentation](../../README.md)** — English docs
 
-## コミュニティ
+## 困ったとき
 
-- [Issue を報告する](https://github.com/ricrio-inc/plainhub/issues)
+迷った・うまく動かない・こうしてほしい、があれば [Issue を開いてください](https://github.com/ricrio-inc/plainhub/issues/new/choose)。小さな質問で大丈夫です（英語でも日本語でも構いません）。
+
+- **❓ How do I…?** — 使い方の質問
+- **🐞 Bug** — 思ったとおりに動かない
+- **💡 Idea** — 改善の提案
+
+返事は AI の手を借りて下書きし、PlainHub のチームが確かめてから送ることがあります。このリポジトリは公開されているので、個人情報・トークン・非公開のファイルの中身は書かないでください。
 
 ## リンク
 
