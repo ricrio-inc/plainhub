@@ -18,6 +18,12 @@ Git の知識は不要。ファイルを開いて、編集して、保存。す�
 
 ## 特徴
 
+### スマホから直す
+
+スマホでノートを開いて1行直すと、そのまま保存されます。保存は、あなたのリポジトリへのコミットです。
+
+<img src="../images/phone-edit.gif" width="300" alt="スマホで Markdown のチェックリストを開き、Code に切り替えて1行足すと Saved と出て、GitHub の履歴にコミットが並ぶ">
+
 ### エディタ
 
 - **Markdown 3モード編集** — Code / Visual（WYSIWYG）/ Preview

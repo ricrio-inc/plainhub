@@ -26,6 +26,12 @@ For engineers and non-engineers alike, working together in the same place.
 
 ## Features
 
+### Edit from your phone
+
+Open a note on your phone, fix a line, and it is saved — as a commit in your own repository.
+
+<img src="docs/images/phone-edit.gif" width="300" alt="Editing a Markdown checklist on a phone: switch to Code, add a line, it shows Saved, and the commit appears in the GitHub history">
+
 ### Editor
 
 - **Markdown 3-mode editing** — Code / Visual (WYSIWYG) / Preview
