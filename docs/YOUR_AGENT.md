@@ -4,6 +4,15 @@ Ask questions about your notes and code in the PlainHub AI panel, and let **Clau
 
 Questions and files go from your browser to your PC and to Claude. They don't go through PlainHub servers.
 
+## Two ways to connect
+
+| Where you ask | What you enter in PlainHub | Start the agent with |
+|---|---|---|
+| PlainHub on the **same PC** (Chrome or Edge) | the 6-digit **pairing code** | `plainhub agent` |
+| PlainHub on your **phone** | the **mailbox repository name** (`you/private-repo`) — not the pairing code | `plainhub agent --mailbox you/private-repo` |
+
+The pairing code works only in a browser on the same PC. On a phone, it always ends with “No agent found” — use [From your phone](#from-your-phone) instead.
+
 ## What you need
 
 1. A PC (Windows, macOS or Linux) with **Node.js 18** or later — check with `node -v`
@@ -151,6 +160,8 @@ Open PlainHub in Chrome or Edge on your PC. On a phone, use [From your phone](#f
 > No agent found on this PC. Run `plainhub agent` in your folder first.
 
 > Your agent isn’t running. Start it with `plainhub agent` in your folder, then ask again.
+
+**On your phone?** The pairing code works only in a browser on the same PC. Use [From your phone](#from-your-phone) and enter the mailbox repository name instead.
 
 Start `plainhub agent` in your folder again (the terminal may have been closed, or the PC restarted). If Chrome or Edge asked about access to apps on your device and you chose Block, allow it in the site settings (the icon left of the address) and try again.
 
