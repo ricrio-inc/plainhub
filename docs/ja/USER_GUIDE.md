@@ -42,17 +42,9 @@ plainhub open README.md -r your/repo
 
 ### MCP Server で使う（Claude Code）
 
-`~/.claude/settings.json` に追加:
-
-```json
-{
-  "mcpServers": {
-    "plainhub": {
-      "command": "npx",
-      "args": ["-y", "plainhub-mcp"]
-    }
-  }
-}
+```bash
+npm install -g plainhub
+claude mcp add plainhub -- plainhub-mcp
 ```
 
 ---
@@ -189,7 +181,7 @@ GitHub 上に分散しているファイルを、リポジトリの壁を越え�
 ## セキュリティ
 
 - **認証**:
-  - Web UI: GitHub 公式の OAuth フローで安全にサインイン（トークンはブラウザの localStorage に保存）
+  - Web UI: GitHub の画面で PlainHub を許可してサインイン（GitHub App）。短い期間のトークンはブラウザの localStorage に、それを更新する長い期間の鍵は、スクリプトから読めず PlainHub のサインインの窓口にだけ送られる Cookie に保存
   - CLI / MCP Server: `~/.config/plainhub/token` にローカル保存（パーミッション 0600、所有者のみ読み書き可）
 - **コード整合性検証**: 実行中のコードが GitHub リポジトリと一致するか SHA-256 ハッシュで検証可能
 

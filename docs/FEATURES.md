@@ -75,9 +75,15 @@ Let AI organize your scattered documents.
 
 ---
 
-## File Server-Style Document Upload (Coming Soon)
+## Your Documents, with Every Version, in Your Own GitHub
 
-Upload documents (PDF, Word, Excel, etc.) directly to a GitHub repository via drag & drop or file picker. Use GitHub with the ease of a file server.
+Add documents (PDF, Word, Excel, images, etc.) to your GitHub repository from the browser.
+
+- Drag and drop files, or whole folders, onto the file list
+- Or pick files with the **Upload files** button
+- Each upload is saved as one commit, so every version is kept
+- Up to 25 MB per file, and up to 100 files at once
+- If a file with the same name already exists, choose to replace it, keep both, or skip it
 
 ---
 
@@ -87,7 +93,7 @@ The AI panel features push-to-talk voice input and AI response read-aloud (TTS).
 
 **Phase 1 (Shipped)**: Push-to-talk + Web Speech API + TTS
 - Hold mic button → speak → release to auto-send → AI executes
-- AI response read-aloud (TTS) — 1x to 3x playback speed for "listen-while-doing"
+- AI response read-aloud (TTS) — 0.75× to 2.0× playback speed for "listen-while-doing"
 - Uses browser-native API (Web Speech API), zero additional cost
 - Supported on Chrome/Edge/Safari
 - Mobile (touch) support
@@ -194,10 +200,12 @@ The most important design principle of PlainHub. Your files are saved only in yo
 | Phase | Target | Details |
 |-------|--------|---------|
 | **Free** | Individuals & small teams | Use all current PlainHub features (public/private repos) |
-| **Team** | Departments & projects | GitHub Organization integration, member management, shared repositories |
-| **Enterprise** | Company-wide | SSO/SAML, MFA, audit logs, IP restrictions, custom domains, self-hosting, SLA |
+| **Team** | Departments & projects | On request: GitHub Organization integration, member management, shared repositories (contact us) |
+| **Enterprise** | Company-wide | On request: SSO/SAML, MFA, audit logs, IP restrictions, custom domains, self-hosting, SLA (contact us) |
 
 ### Enterprise Features
+
+These features are not part of the standard product, but we can build and provide them to fit your requirements. [Contact us](https://plainhub.dev/enterprise) about the features you need.
 
 - **GitHub Enterprise Server / Cloud support** — connect to on-premise GitHub
 - **SSO (SAML/OIDC)** — integrate with your existing identity provider
@@ -209,7 +217,7 @@ The most important design principle of PlainHub. Your files are saved only in yo
 ### Value Proposition
 
 - **High data portability** — data stays in standard Git format on GitHub. Your data survives even if you stop using PlainHub
-- **Leverage existing infrastructure** — companies already using GitHub Enterprise can adopt immediately
+- **Leverage existing infrastructure** — if your team already uses GitHub (github.com), you can start without new storage. GitHub Enterprise connectivity is available on request
 - **Minimal learning curve** — non-engineers just open a browser and start writing
 
 ---

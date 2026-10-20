@@ -28,17 +28,10 @@ npm install -g plainhub
 claude mcp add plainhub -- plainhub-mcp
 ```
 
-または `~/.claude/settings.json` に直接追加:
+台帳の道具（`plainhub_post`・`plainhub_decide`・`plainhub_ledger_*`）も使うときは、Git リポジトリのフォルダもサーバーに渡します:
 
-```json
-{
-  "mcpServers": {
-    "plainhub": {
-      "command": "npx",
-      "args": ["-y", "plainhub-mcp"]
-    }
-  }
-}
+```bash
+claude mcp add plainhub -e PLAINHUB_LEDGER=/path/to/repo -- plainhub-mcp
 ```
 
 ### Cursor
@@ -64,7 +57,7 @@ VS Code の MCP 設定に追加:
   "mcpServers": {
     "plainhub": {
       "command": "npx",
-      "args": ["-y", "plainhub-mcp"]
+      "args": ["-y", "-p", "plainhub", "plainhub-mcp"]
     }
   }
 }
