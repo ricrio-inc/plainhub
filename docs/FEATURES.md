@@ -217,7 +217,7 @@ These features are not part of the standard product, but we can build and provid
 ### Value Proposition
 
 - **High data portability** — data stays in standard Git format on GitHub. Your data survives even if you stop using PlainHub
-- **Leverage existing infrastructure** — companies already using GitHub Enterprise can adopt immediately
+- **Leverage existing infrastructure** — if your team already uses GitHub (github.com), you can start without new storage. GitHub Enterprise connectivity is available on request
 - **Minimal learning curve** — non-engineers just open a browser and start writing
 
 ---
