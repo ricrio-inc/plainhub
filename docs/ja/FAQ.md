@@ -14,7 +14,7 @@ PlainHub は、GitHub リポジトリのファイルをブラウザで直接編�
 
 ### 無料で使えますか？
 
-はい、無料で使えます。[plainhub.dev](https://plainhub.dev) にアクセスして GitHub でサインインするだけです。
+はい、個人は無料で使えます。[plainhub.dev](https://plainhub.dev) にアクセスして GitHub でサインインするだけです。組織向けには、ご要件に合わせて個別に機能を提供する Enterprise プランがあります（ご相談ください）。詳しくは[エンタープライズのページ](https://plainhub.dev/ja/enterprise)をご覧ください。
 
 ### データはどこに保存されますか？
 
@@ -22,7 +22,7 @@ PlainHub は、GitHub リポジトリのファイルをブラウザで直接編�
 
 ### GitHub アカウントが必要ですか？
 
-はい、PlainHub は GitHub をバックエンドとして使用するため、GitHub アカウントが必要です。無料の GitHub アカウントで問題ありません。
+試すだけなら要りません。[app.plainhub.dev/?guest=1](https://app.plainhub.dev/?guest=1) から、サインインせずに試せます。自分の GitHub リポジトリに保存するには、GitHub アカウントが必要です。無料の GitHub アカウントで問題ありません。
 
 ### github.dev との違いは何ですか？
 
@@ -48,7 +48,7 @@ GitHub → Settings → Developer settings → Personal access tokens → Genera
 
 ### トークンはどこに保存されますか？
 
-- **Web UI**: ブラウザの localStorage に保存されます
+- **Web UI**: サインインは GitHub App で行います。短い期間のトークンはブラウザの localStorage に、それを更新する長い期間の鍵は、スクリプトから読めず PlainHub のサインインの窓口にだけ送られる Cookie に保存されます
 - **CLI / MCP Server**: `~/.config/plainhub/token` に保存されます（パーミッション 0600）
 
 ---
@@ -92,7 +92,10 @@ Ctrl+V（Mac: Cmd+V）でクリップボードのスクリーンショットを�
 
 ### AI パネルを使うには何が必要ですか？
 
-Anthropic の API キー（BYOK: Bring Your Own Key）が必要です。設定画面から API キーを入力してください。
+使い方は2通りあります。
+
+- **自分の Anthropic API キー**（BYOK: Bring Your Own Key）— 設定画面から API キーを入力します。
+- **自分の PC の Claude Code** — API キーは要りません。Claude のサブスクリプションを使います。[Your agent](../YOUR_AGENT.md)（英語）をご覧ください。
 
 ### どのモデルが使えますか？
 
@@ -100,7 +103,7 @@ Claude Opus、Sonnet、Haiku（デフォルト）の 3 モデルから選択で�
 
 ### API の利用料金はかかりますか？
 
-Anthropic の API 利用料金がかかります。PlainHub 自体は無料ですが、AI パネルの利用には Anthropic のアカウントと API キーが必要です。
+自分の Anthropic API キーを使う場合は、Anthropic の API 利用料金がかかります。自分の Claude Code をつなぐ場合は API キーは要らず、Claude のサブスクリプションを使います。PlainHub 自体は、個人は無料です。
 
 ---
 

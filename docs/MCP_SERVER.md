@@ -28,17 +28,10 @@ npm install -g plainhub
 claude mcp add plainhub -- plainhub-mcp
 ```
 
-Or add directly to `~/.claude/settings.json`:
+For the ledger tools (`plainhub_post`, `plainhub_decide`, `plainhub_ledger_*`), also give the server the folder of your Git repository:
 
-```json
-{
-  "mcpServers": {
-    "plainhub": {
-      "command": "npx",
-      "args": ["-y", "plainhub-mcp"]
-    }
-  }
-}
+```bash
+claude mcp add plainhub -e PLAINHUB_LEDGER=/path/to/repo -- plainhub-mcp
 ```
 
 ### Cursor
@@ -64,7 +57,7 @@ Add to your VS Code MCP settings:
   "mcpServers": {
     "plainhub": {
       "command": "npx",
-      "args": ["-y", "plainhub-mcp"]
+      "args": ["-y", "-p", "plainhub", "plainhub-mcp"]
     }
   }
 }

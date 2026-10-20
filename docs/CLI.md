@@ -48,7 +48,7 @@ plainhub browse -r owner/repo  # Open the file browser
 | `--preview` | on/off | Markdown preview |
 | `--scroll` | string | Scroll to a heading in preview |
 | `--sidebar` | on/off | Sidebar visibility |
-| `--fontSize` | 8-72 | Font size |
+| `--fontSize` | 10-32 | Font size |
 | `--lineNumbers` | on/off | Line numbers |
 | `--whitespace` | on/off | Whitespace characters |
 | `--no-auth` | | Open without authentication |

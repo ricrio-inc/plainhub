@@ -42,17 +42,9 @@ plainhub open README.md -r your/repo
 
 ### MCP Server (Claude Code)
 
-Add to `~/.claude/settings.json`:
-
-```json
-{
-  "mcpServers": {
-    "plainhub": {
-      "command": "npx",
-      "args": ["-y", "plainhub-mcp"]
-    }
-  }
-}
+```bash
+npm install -g plainhub
+claude mcp add plainhub -- plainhub-mcp
 ```
 
 ---
@@ -189,7 +181,7 @@ If the repository is empty, the sidebar shows a **＋ Create README.md** button 
 ## Security
 
 - **Authentication**:
-  - Web UI: Sign in securely via GitHub's official OAuth flow (tokens stored in browser localStorage)
+  - Web UI: Sign in by approving PlainHub on GitHub's own page (a GitHub App). The short-lived access token is kept in browser localStorage; the long-lived token that renews it is kept in a cookie that scripts cannot read and that is sent only to PlainHub's sign-in endpoints
   - CLI / MCP Server: Stored locally at `~/.config/plainhub/token` (permissions 0600, owner read/write only)
 - **Code integrity verification**: Verify that running code matches the GitHub repository via SHA-256 hash
 

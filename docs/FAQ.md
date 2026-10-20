@@ -14,7 +14,7 @@ PlainHub is an online text editor that lets you edit and save files in your GitH
 
 ### Is it free?
 
-Yes, PlainHub is free to use. Just visit [plainhub.dev](https://plainhub.dev) and sign in with GitHub.
+Yes, PlainHub is free for individuals. Just visit [plainhub.dev](https://plainhub.dev) and sign in with GitHub. For organizations, Enterprise features are available on request, built to your requirements — see the [Enterprise page](https://plainhub.dev/enterprise).
 
 ### Where is my data stored?
 
@@ -22,7 +22,7 @@ Your files are stored in your own GitHub repository. PlainHub doesn't store them
 
 ### Do I need a GitHub account?
 
-Yes, PlainHub uses GitHub as its backend, so a GitHub account is required. A free GitHub account works fine.
+Not to try it — you can try PlainHub without signing in at [app.plainhub.dev/?guest=1](https://app.plainhub.dev/?guest=1). To save files to your own GitHub repository, you need a GitHub account. A free GitHub account works fine.
 
 ### How is PlainHub different from github.dev?
 
@@ -48,7 +48,7 @@ Go to GitHub → Settings → Developer settings → Personal access tokens → 
 
 ### Where are tokens stored?
 
-- **Web UI**: Stored in the browser's localStorage
+- **Web UI**: You sign in with a GitHub App. The short-lived access token is stored in the browser's localStorage; the long-lived token that renews it is stored in a cookie that scripts cannot read and that is sent only to PlainHub's sign-in endpoints
 - **CLI / MCP Server**: Stored at `~/.config/plainhub/token` (permissions 0600)
 
 ---
@@ -92,7 +92,10 @@ This happens when the same file has been edited on another device or by another 
 
 ### What do I need to use the AI panel?
 
-You need an Anthropic API key (BYOK: Bring Your Own Key). Enter your API key in the settings page.
+There are two ways:
+
+- **Your own Anthropic API key** (BYOK: Bring Your Own Key) — enter your API key in the settings page.
+- **Your own Claude Code on your PC** — no API key needed; it uses your Claude subscription. See [Your agent](YOUR_AGENT.md).
 
 ### Which models are available?
 
@@ -100,7 +103,7 @@ You can choose from three models: Claude Opus, Sonnet, and Haiku (default). Swit
 
 ### Are there usage fees for the API?
 
-Anthropic API usage fees apply. While PlainHub itself is free, using the AI panel requires an Anthropic account and API key.
+If you use your own Anthropic API key, Anthropic API usage fees apply. If you connect your own Claude Code instead, no API key is needed — it uses your Claude subscription. PlainHub itself is free for individuals.
 
 ---
 
