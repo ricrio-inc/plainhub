@@ -159,11 +159,11 @@ Search across all your GitHub repositories in one place.
 ## Files and Folders
 
 ### Create a new file
-1. Move the mouse over the file list header (the repository name at the top of the sidebar). A **＋** button appears.
-2. Click **＋** and choose **📄 New File**.
-3. Type a name such as `memo.md` and press OK. The file is created as a commit in your repository and opens in the editor.
+1. Click **＋ New** at the top of the sidebar (next to the repository name).
+2. Choose **📄 New file**. A name box appears in the file list.
+3. Type a name such as `memo.md` and press Enter (without an extension, `.md` is added). The file is created as a commit in your repository and opens in the editor. Press Esc to cancel.
 
-To create a file inside a folder, right-click the folder and choose **📄 New File**. **📁 New Folder** works the same way.
+The file is created in the folder you are viewing. To create a file inside another folder, right-click the folder and choose **📄 New file**. **📁 New folder** works the same way. On a PC, Ctrl+Alt+N also starts a new file.
 
 If the repository is empty, the sidebar shows a **＋ Create README.md** button that creates your first file.
 

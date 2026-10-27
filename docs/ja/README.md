@@ -1,6 +1,8 @@
 # PlainHub
 
-**あなたのメモは、あなたの GitHub に。** GitHub に保存する、プレーンテキストのエディタです（Markdown にも対応）。保存するたびに履歴（コミット）が残り、AI が編集を手伝います。
+**AIはあなたのGitHubで働き、決めるのはあなた。**
+
+Claude Code とつながる、GitHub のエディタです。AI エージェントは、進み具合と判断カードを、自分のリポジトリに置いた共有の台帳に書きます。承認はあなたが、ブラウザからでもスマホからでもできます。
 
 [![PlainHub を試す](https://img.shields.io/badge/PlainHub%20を試す-app.plainhub.dev-blue?style=for-the-badge)](https://app.plainhub.dev)
 [![npm version](https://img.shields.io/npm/v/plainhub)](https://www.npmjs.com/package/plainhub)
@@ -9,12 +11,19 @@
 
 ![PlainHub: メモを書くと保存されてコミットになり、履歴を確かめ、AI に直しを頼んで適用する](../images/hero.gif)
 
-> **⭐ PlainHub が役立ったら、ぜひスターをお願いします — 新機能の開発を後押しできます。**
+## 3つの使い方
 
-PlainHub は、GitHub を誰でも簡単に使えるようにする AI 駆動オンラインエディタです。
-Git の知識は不要。ファイルを開いて、編集して、保存。すべて GitHub に直接。
-何万行でも重くならない。GitHub を自然言語で操作 — AI にやりたいことを伝えるだけ。
-エンジニアもビジネスも、同じドキュメントを同じ場所で。
+### 1. 編集: 開いて、書いて、保存する
+
+GitHub のリポジトリのファイルを開いて書き、保存できます。Git の知識は要りません。保存するたびに、あなたのリポジトリに履歴（コミット）が残ります。開いているファイルについて AI に聞くこともでき、AI の直しの案は、あなたが確かめてから反映されます。→ [ユーザーガイド](USER_GUIDE.md)
+
+### 2. 台帳: 進み具合と判断カードを、自分のリポジトリに
+
+AI エージェントは、発言と判断カードを、あなたのリポジトリの `.agents/` に Markdown のファイルとして書きます。`plainhub ledger sync .` で GitHub に送り、PlainHub でそのリポジトリを開きます。書き込めるリポジトリなら、判断を待っているカードに Approve と Decline のボタンが出ます。PC でもスマホでも同じです。台帳を始めるのに要るのは Git と Node.js 18 以上だけです。→ [台帳の使い方（英語）](https://www.npmjs.com/package/plainhub#use-without-plainhub)
+
+### 3. Your agent: 自分の Claude Code とつなぐ
+
+PlainHub の AIパネルで質問すると、あなたの PC の Claude Code が答えます。同じ PC からでも、スマホからでも聞けます。API キーは要らず、あなたの Claude のサブスクリプションを使います。→ [Your agent の使い方](YOUR_AGENT.md)
 
 ## 特徴
 
@@ -83,12 +92,13 @@ AI に話しかけるだけ: *「owner/repo の README を PlainHub で開いて
 - **[ユースケース](USE_CASES.md)** — PlainHub の活用シーン
 - **[CLI リファレンス](CLI.md)** — ターミナルからの操作
 - **[MCP Server](MCP_SERVER.md)** — AI IDE 連携
+- **[Your agent](YOUR_AGENT.md)** — 自分の Claude Code を AIパネルにつなぐ
 - **[FAQ](FAQ.md)** — よくある質問とトラブルシューティング
 - **[English Documentation](../../README.md)** — English docs
 
-## 困ったとき
+## Ask / Report（質問・不具合の報告）
 
-迷った・うまく動かない・こうしてほしい、があれば [Issue を開いてください](https://github.com/ricrio-inc/plainhub/issues/new/choose)。小さな質問で大丈夫です（英語でも日本語でも構いません）。
+迷った・うまく動かない・こうしてほしい、があれば [Issue を開いてください](https://github.com/ricrio-inc/plainhub/issues/new/choose)。小さな質問で大丈夫です（英語でも日本語でも構いません）。ふだんは2営業日以内に返事をします。
 
 - **❓ How do I…?** — 使い方の質問
 - **🐞 Bug** — 思ったとおりに動かない
@@ -100,6 +110,8 @@ AI に話しかけるだけ: *「owner/repo の README を PlainHub で開いて
 
 - **アプリ**: [app.plainhub.dev](https://app.plainhub.dev)
 - **About**: [plainhub.dev](https://plainhub.dev)
+
+PlainHub が役に立ったら、⭐ を付けていただけると、ほかの人が見つけやすくなります。
 
 ## ライセンス
 

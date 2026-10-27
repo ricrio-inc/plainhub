@@ -95,7 +95,7 @@ Ctrl+V（Mac: Cmd+V）でクリップボードのスクリーンショットを�
 使い方は2通りあります。
 
 - **自分の Anthropic API キー**（BYOK: Bring Your Own Key）— 設定画面から API キーを入力します。
-- **自分の PC の Claude Code** — API キーは要りません。Claude のサブスクリプションを使います。[Your agent](../YOUR_AGENT.md)（英語）をご覧ください。
+- **自分の PC の Claude Code** — API キーは要りません。Claude のサブスクリプションを使います。[Your agent](YOUR_AGENT.md) をご覧ください。
 
 ### どのモデルが使えますか？
 

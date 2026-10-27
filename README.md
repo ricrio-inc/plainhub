@@ -1,6 +1,8 @@
 # PlainHub
 
-**Your notes, in your own GitHub.** A plain-text editor for your GitHub repos, with Markdown support. Every save is a Git commit, and AI helps you edit.
+**Your AI works in your GitHub. You decide.**
+
+A GitHub editor, wired to Claude Code: your agent keeps a shared ledger of progress and decision cards in your own repo, and you approve from your browser or phone.
 
 [![Try PlainHub](https://img.shields.io/badge/Try%20PlainHub-app.plainhub.dev-blue?style=for-the-badge)](https://app.plainhub.dev)
 [![npm version](https://img.shields.io/npm/v/plainhub)](https://www.npmjs.com/package/plainhub)
@@ -9,12 +11,19 @@
 
 ![PlainHub: write a note, it is saved as a commit, check the history, ask AI for an edit and apply it](docs/images/hero.gif)
 
-> **⭐ If PlainHub helps you, please star this repo — your support directly powers new features.**
+## Three ways to use it
 
-PlainHub is an AI-driven online editor that makes GitHub simple for everyone.
-No Git knowledge required. Open, edit, save — directly to your repo.
-Handles huge files with ease. Control GitHub with natural language — just tell the AI what you want.
-For engineers and non-engineers alike, working together in the same place.
+### 1. Edit — open, write, save
+
+Open a file in your GitHub repositories, write, and save — no Git knowledge required. Every save is a commit in your own repository. Ask the AI about the file in front of you, and review each proposed edit before it is applied. → [User Guide](docs/USER_GUIDE.md)
+
+### 2. Ledger — progress and decision cards in your repo
+
+Your agents write their messages and decision cards as Markdown files in `.agents/` in your own repository. Send it to GitHub with `plainhub ledger sync .` and open the repository in PlainHub. If you can write to it, decision cards waiting for you show Approve and Decline buttons, on your PC or your phone. Starting a ledger needs only Git and Node.js 18 or later. → [How to use the ledger](https://www.npmjs.com/package/plainhub#use-without-plainhub)
+
+### 3. Your agent — connect your own Claude Code
+
+Ask in the PlainHub AI panel, and Claude Code on your own PC answers — from the same PC or from your phone. No API key needed: it uses your Claude subscription. → [Your agent](docs/YOUR_AGENT.md)
 
 ## Why PlainHub
 
@@ -91,12 +100,13 @@ Then say: *"Open the README in owner/repo on PlainHub"*
 - **[Use Cases](docs/USE_CASES.md)** — When and how to use PlainHub
 - **[CLI Reference](docs/CLI.md)** — Terminal commands and options
 - **[MCP Server](docs/MCP_SERVER.md)** — AI IDE integration
+- **[Your agent](docs/YOUR_AGENT.md)** — Connect your own Claude Code to the AI panel
 - **[FAQ](docs/FAQ.md)** — Troubleshooting and common questions
 - **[日本語ドキュメント](docs/ja/)** — Japanese documentation
 
-## Getting help
+## Ask / Report
 
-Stuck, found a bug, or have an idea? [Open an issue](https://github.com/ricrio-inc/plainhub/issues/new/choose) — no question is too small.
+Ask a question or report a problem: [open an issue](https://github.com/ricrio-inc/plainhub/issues/new/choose) — no question is too small. We usually reply within 2 business days.
 
 - **❓ How do I…?** — ask how to do something
 - **🐞 Bug** — something doesn't work as expected
@@ -109,6 +119,10 @@ Replies may be drafted with the help of an AI assistant and are checked by the P
 - **App**: [app.plainhub.dev](https://app.plainhub.dev)
 - **About**: [plainhub.dev](https://plainhub.dev)
 
+If PlainHub is useful to you, a star helps others find it.
+
 ## License
 
 Copyright © 2025 [ricrio Inc.](https://ai.ricrio.jp/) All rights reserved.
+
+<sub>The documents in this repository are generated from another place, so please don't edit them here. If something needs fixing, let us know with an [issue](https://github.com/ricrio-inc/plainhub/issues/new/choose).</sub>
