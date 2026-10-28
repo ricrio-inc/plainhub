@@ -8,6 +8,8 @@
 
 ## インストール
 
+Node.js 18 以上が必要です。
+
 ```bash
 npm install -g plainhub
 ```
@@ -51,7 +53,9 @@ plainhub browse -r owner/repo  # ファイルブラウザを開く
 | `--fontSize` | 10-32 | フォントサイズ |
 | `--lineNumbers` | on/off | 行番号表示 |
 | `--whitespace` | on/off | 不可視文字表示 |
-| `--no-auth` | | 認証なしで開く |
+| `--header` | on/off | ヘッダー表示 |
+| `--with-auth` | | 保存したトークンをブラウザに渡す（既定はオフ） |
+| `--no-auth` | | 保存したトークンを渡さない（既定） |
 
 ---
 

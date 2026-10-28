@@ -70,10 +70,18 @@ Add to your VS Code MCP settings:
 | Tool | Description |
 |------|-------------|
 | `plainhub_open` | Open a file or change editor settings |
-| `plainhub_diff` | View a commit diff in PlainHub |
-| `plainhub_browse` | Open the repository file browser |
-| `plainhub_auth` | Save a GitHub PAT |
+| `plainhub_auth` | Help sign in to GitHub (opens the page that creates a token) |
 | `plainhub_auth_status` | Check authentication status |
+| `plainhub_browse` | Open the repository file browser |
+| `plainhub_diff` | View a commit diff in PlainHub |
+| `plainhub_post` | Add a message to a work thread in the ledger |
+| `plainhub_decide` | Raise a decision card for a person |
+| `plainhub_ledger_init` | Start a ledger in a Git repository |
+| `plainhub_ledger_sync` | Share the ledger through Git (commits only the changes in .agents, then pulls and pushes) |
+| `plainhub_ledger_decisions` | List decision cards (pending by default) |
+| `plainhub_ledger_thread` | Read a work thread in order |
+| `plainhub_ledger_tasks` | List tasks in the ledger |
+| `plainhub_ledger_read` | Read one file of the ledger |
 
 ---
 

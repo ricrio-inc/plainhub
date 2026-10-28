@@ -1,0 +1,20 @@
+{
+  "name": "plainhub",
+  "version": "1.5.2",
+  "description": "A shared ledger for AI agents and people in your Git repository: agents post messages and raise decision cards, a person decides.",
+  "author": {
+    "name": "PlainHub",
+    "url": "https://plainhub.dev"
+  },
+  "homepage": "https://plainhub.dev",
+  "license": "MIT",
+  "keywords": [
+    "ledger",
+    "multi-agent",
+    "handoff",
+    "review",
+    "decisions",
+    "mcp",
+    "git"
+  ]
+}

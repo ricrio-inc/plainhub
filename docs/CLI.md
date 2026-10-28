@@ -8,6 +8,8 @@ A CLI tool that lets you open any GitHub repository file in PlainHub with a sing
 
 ## Installation
 
+Needs Node.js 18 or later.
+
 ```bash
 npm install -g plainhub
 ```
@@ -51,7 +53,9 @@ plainhub browse -r owner/repo  # Open the file browser
 | `--fontSize` | 10-32 | Font size |
 | `--lineNumbers` | on/off | Line numbers |
 | `--whitespace` | on/off | Whitespace characters |
-| `--no-auth` | | Open without authentication |
+| `--header` | on/off | Header visibility |
+| `--with-auth` | | Pass the saved token to the browser (off by default) |
+| `--no-auth` | | Don't pass the saved token (default) |
 
 ---
 

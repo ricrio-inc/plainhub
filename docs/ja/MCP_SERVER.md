@@ -70,10 +70,18 @@ VS Code の MCP 設定に追加:
 | ツール | 説明 |
 |------|------|
 | `plainhub_open` | ファイルを開く、またはエディタ設定を変更 |
-| `plainhub_diff` | コミットの差分を PlainHub で表示 |
-| `plainhub_browse` | リポジトリのファイルブラウザを開く |
-| `plainhub_auth` | GitHub PAT を保存 |
+| `plainhub_auth` | GitHub へのサインインを手伝う（トークンを作るページを開く） |
 | `plainhub_auth_status` | 認証状態を確認 |
+| `plainhub_browse` | リポジトリのファイルブラウザを開く |
+| `plainhub_diff` | コミットの差分を PlainHub で表示 |
+| `plainhub_post` | 台帳の作業のスレッドに発言を足す |
+| `plainhub_decide` | 人が決める判断カードを出す |
+| `plainhub_ledger_init` | Git のリポジトリで台帳を始める |
+| `plainhub_ledger_sync` | 台帳を Git で共有する（.agents の変更だけを commit して、受け取って送る） |
+| `plainhub_ledger_decisions` | 判断カードの一覧（既定は判断待ち） |
+| `plainhub_ledger_thread` | 作業のスレッドを順に読む |
+| `plainhub_ledger_tasks` | 台帳の課題の一覧 |
+| `plainhub_ledger_read` | 台帳のファイルを1つ読む |
 
 ---
 

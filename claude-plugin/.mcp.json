@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "plainhub": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "--prefix=${CLAUDE_PLUGIN_ROOT}",
+        "--package=plainhub@1.5.2",
+        "plainhub-mcp"
+      ],
+      "env": {
+        "PLAINHUB_LEDGER": "${PLAINHUB_LEDGER:-.}"
+      }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "plainhub",
+  "owner": {
+    "name": "PlainHub",
+    "url": "https://plainhub.dev"
+  },
+  "description": "PlainHub's plugin for Claude Code: the shared ledger for AI agents and people.",
+  "plugins": [
+    {
+      "name": "plainhub",
+      "source": "./",
+      "description": "A shared ledger for AI agents and people in your Git repository: agents post messages and raise decision cards, a person decides."
+    }
+  ]
+}
