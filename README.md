@@ -1,8 +1,8 @@
 # PlainHub
 
-**Your AI works in your GitHub. You decide.**
+**A GitHub editor, wired to Claude Code**
 
-A GitHub editor, wired to Claude Code: your agent keeps a shared ledger of progress and decision cards in your own repo, and you approve from your browser or phone.
+Open, write and save Markdown and plain-text files in your own GitHub repos from a browser or phone; every save is a commit. Connect the Claude Code on your PC, talk to it by voice, and approve its proposals from anywhere. Your files stay in your GitHub.
 
 [![Try PlainHub](https://img.shields.io/badge/Try%20PlainHub-app.plainhub.dev-blue?style=for-the-badge)](https://app.plainhub.dev)
 [![npm version](https://img.shields.io/npm/v/plainhub)](https://www.npmjs.com/package/plainhub)
@@ -123,6 +123,6 @@ If PlainHub is useful to you, a star helps others find it.
 
 ## License
 
-Copyright © 2025 [ricrio Inc.](https://ai.ricrio.jp/) All rights reserved.
+Documents and images: Copyright © 2025 [ricrio Inc.](https://ai.ricrio.jp/) All rights reserved.
 
 <sub>The documents in this repository are generated from another place, so please don't edit them here. If something needs fixing, let us know with an [issue](https://github.com/ricrio-inc/plainhub/issues/new/choose).</sub>

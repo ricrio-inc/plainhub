@@ -1,8 +1,8 @@
 # PlainHub
 
-**AIはあなたのGitHubで働き、決めるのはあなた。**
+**Claude Code とつながる、GitHub のエディタ。**
 
-Claude Code とつながる、GitHub のエディタです。AI エージェントは、進み具合と判断カードを、自分のリポジトリに置いた共有の台帳に書きます。承認はあなたが、ブラウザからでもスマホからでもできます。
+ブラウザやスマホから、自分の GitHub のリポジトリにある Markdown やテキストのファイルを開いて、書いて、保存できます。保存するたびに履歴（コミット）が残ります。PC の Claude Code とつなぐと、声で話しかけられ、その提案をどこからでも承認できます。ファイルはあなたの GitHub に置いたままです。
 
 [![PlainHub を試す](https://img.shields.io/badge/PlainHub%20を試す-app.plainhub.dev-blue?style=for-the-badge)](https://app.plainhub.dev)
 [![npm version](https://img.shields.io/npm/v/plainhub)](https://www.npmjs.com/package/plainhub)
