@@ -1,0 +1,48 @@
+{
+  "name": "plainhub",
+  "version": "1.6.0",
+  "mcpName": "io.github.ricrio-inc/plainhub",
+  "description": "PlainHub CLI and MCP server: connect your own Claude Code to the PlainHub AI panel, open GitHub files in PlainHub, and keep a shared ledger for AI agents and people.",
+  "type": "module",
+  "bin": {
+    "plainhub": "src/cli.js",
+    "plainhub-mcp": "src/mcp-server.js"
+  },
+  "files": [
+    "src/",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "mcp": "node src/mcp-server.js",
+    "test": "node test/run.cjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1"
+  },
+  "keywords": [
+    "plainhub",
+    "github",
+    "editor",
+    "mcp",
+    "mcp-server",
+    "cli",
+    "notepad",
+    "ai",
+    "voice",
+    "tts",
+    "claude"
+  ],
+  "author": "PlainHub <npm@plainhub.dev>",
+  "homepage": "https://plainhub.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ricrio-inc/plainhub.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ricrio-inc/plainhub/issues"
+  },
+  "license": "MIT"
+}

@@ -25,6 +25,31 @@ Your agents write their messages and decision cards as Markdown files in `.agent
 
 Ask in the PlainHub AI panel, and Claude Code on your own PC answers — from the same PC or from your phone. No API key needed: it uses your Claude subscription. → [Your agent](docs/YOUR_AGENT.md)
 
+## What's inside
+
+The [`cli/`](https://github.com/ricrio-inc/plainhub/tree/main/cli) folder is the source of the npm package [`plainhub`](https://www.npmjs.com/package/plainhub): the CLI, the MCP server, Your agent and the ledger. It holds the same files as the published version on npm.
+
+**The ledger works without PlainHub.** Your AI agents write messages and decision cards as Markdown files in `.agents/` of your own repository, with the MCP tools `plainhub_ledger_init`, `plainhub_post`, `plainhub_decide`, `plainhub_ledger_read` and `plainhub_ledger_sync` (or the same `plainhub` commands), and send them with Git. Nothing goes through PlainHub's servers or screens, and there is no other service to depend on. → [Use without PlainHub](https://www.npmjs.com/package/plainhub#use-without-plainhub)
+
+**A person decides.** Through the MCP tools, an agent can't choose the owner role, so approving a card is left to a person. PlainHub is the easiest place to do that: open the repository on your phone and press Approve.
+
+| File in `cli/src/` | What it does |
+|---|---|
+| `cli.js` | The `plainhub` command: open files, sign in, the ledger commands, `agent` and `doctor` |
+| `mcp-server.js` | The MCP server (`plainhub-mcp`): registers the tools for your AI IDE |
+| `tool-docs.js` | The description of each MCP tool that your AI reads |
+| `ledger.js` | The ledger: its rules, checks and writing (`.agents/`) |
+| `core.js` | Building PlainHub links, opening the browser, keeping your token |
+| `cli-options.js` | The options of `plainhub open` (also used for the docs) |
+| `agent.js` | Your agent on this PC: connects your Claude Code to the AI panel (local only) |
+| `mailbox.js` | Your agent from your phone: questions and answers go through a private repository of yours |
+| `agent-core.js` | The shared core of Your agent: one question in, a stream of events out |
+| `agent-mcp.js` | The PlainHub tools that Your agent can use in the panel |
+| `agent-spec.js` | Fixed values shared by `agent.js` and `mailbox.js` |
+| `doctor.js` | `plainhub doctor`: checks this PC before you start Your agent |
+
+Some comments are in Japanese.
+
 ## Why PlainHub
 
 - **GitHub-native** — Your files are saved only in your own GitHub repository. PlainHub doesn't store them.
@@ -122,6 +147,8 @@ Replies may be drafted with the help of an AI assistant and are checked by the P
 If PlainHub is useful to you, a star helps others find it.
 
 ## License
+
+The code in `cli/` (the npm package `plainhub`) is released under the [MIT License](https://github.com/ricrio-inc/plainhub/blob/main/LICENSE).
 
 Documents and images: Copyright © 2025 [ricrio Inc.](https://ai.ricrio.jp/) All rights reserved.
 

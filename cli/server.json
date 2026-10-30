@@ -1,0 +1,25 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.ricrio-inc/plainhub",
+  "description": "Open files and diffs from your agent in PlainHub, and keep a shared ledger in your own GitHub repo.",
+  "repository": {
+    "url": "https://github.com/ricrio-inc/plainhub",
+    "source": "github"
+  },
+  "version": "1.6.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "plainhub",
+      "version": "1.6.0",
+      "runtimeHint": "npx",
+      "transport": {
+        "type": "stdio"
+      },
+      "packageArguments": [
+        { "type": "positional", "value": "mcp" }
+      ]
+    }
+  ]
+}

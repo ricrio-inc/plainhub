@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "plainhub",
-      "source": "./",
+      "source": "./claude-plugin",
       "description": "A shared ledger for AI agents and people in your Git repository: agents post messages and raise decision cards, a person decides."
     }
   ]

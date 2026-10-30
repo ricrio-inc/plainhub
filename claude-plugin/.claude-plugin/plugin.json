@@ -1,6 +1,6 @@
 {
   "name": "plainhub",
-  "version": "1.5.2",
+  "version": "1.6.0",
   "description": "A shared ledger for AI agents and people in your Git repository: agents post messages and raise decision cards, a person decides.",
   "author": {
     "name": "PlainHub",
