@@ -10,7 +10,7 @@ import { openSync, readSync, closeSync, fstatSync, constants as fsConstants } fr
 import { createAgentServer, claudeRunner, stopAllClaude, fileTokenStore, isAllowedExtraOrigin, AGENT_PORTS, DEFAULT_ORIGINS, showPairingCode, userDefaultPermissionMode } from './agent.js';
 import { githubClient, checkMailboxRepo, isMailboxRepo, pickMailboxToken, createMailbox, MAILBOX_BRANCH } from './mailbox.js';
 import { runDoctor, doctorText } from './doctor.js';
-import { postMessage, createDecision, checkLedger, roomLanguage, languageNote, LedgerError, LIMITS, safeText, listDecisions, listTasks, readThread, readEntry, decisionsText, tasksText, threadText, entryText, initLedger, initText, syncLedger, syncText, formatLedger, formatText } from './ledger.js';
+import { postMessage, createDecision, checkLedger, roomLanguage, languageNote, LedgerError, LIMITS, safeText, listDecisions, listTasks, readThread, readEntry, decisionsText, tasksText, threadText, entryText, initLedger, initText, openLinkText, syncLedger, syncText, formatLedger, formatText } from './ledger.js';
 
 // open・browse・diff の共通: 行き先（PLAINHUB_APP_URL）が許されなければ開かずに exit 1
 async function openOrPrint(options, { noAuth, noOpen }) {
@@ -450,6 +450,10 @@ Press Ctrl+C to stop.`);
     await new Promise(() => {});
 }
 
+// 貼り付けてそのまま使える名前だけ出す（空白・$・~・- で始まる名前などは <folder>）
+function shownFolder(ledger) { return /^[\w./][\w./-]*$/.test(ledger) ? ledger : '<folder>'; }
+function syncHint(ledger) { return `plainhub ledger sync ${shownFolder(ledger)}`; }
+
 // 台帳の道具（引数を読むだけ。検査と書き込みは ledger.js）
 function runLedger(command, rest) {
     const strict = { strict: true, allowPositionals: command === 'ledger' };
@@ -460,8 +464,9 @@ function runLedger(command, rest) {
         } });
         const r = postMessage({ ...values, body: readBody(values['body-file']) });
         console.log(r.path);
-        // 部屋の言葉は標準エラーへ（標準出力は書いたパスだけ）
+        // 部屋の言葉と PlainHub で開くリンク（PG3）は標準エラーへ（標準出力は書いたパスだけ）
         console.error(languageNote(roomLanguage(values.ledger)));
+        console.error(openLinkText(values.ledger, { path: r.rel }, { sync: syncHint(values.ledger) }));
     } else if (command === 'decide') {
         const { values } = parseArgs({ args: rest, ...strict, options: {
             ledger: { type: 'string' }, id: { type: 'string' }, summary: { type: 'string' },
@@ -471,19 +476,19 @@ function runLedger(command, rest) {
         const r = createDecision({ ledger: values.ledger, id: values.id, summary: values.summary, ref, body: readBody(values['body-file']) });
         console.log(r.path);
         console.error(languageNote(roomLanguage(values.ledger)));
+        console.error(openLinkText(values.ledger, { path: r.rel }, { sync: syncHint(values.ledger), card: true }));
     } else {
         const { values, positionals } = parseArgs({ args: rest, ...strict, options: { paths: { type: 'boolean' }, status: { type: 'string' }, language: { type: 'string' }, write: { type: 'boolean' } } });
         if (positionals[0] === 'init') {
             if (positionals.length !== 2 || values.paths || values.status !== undefined || values.write) throw new LedgerError('usage: plainhub ledger init <folder> [--language <tag>]');
             const ledger = positionals[1];
             const r = initLedger({ ledger, language: values.language });
-            // 貼り付けてそのまま使える名前だけ出す（空白・$・~・- で始まる名前などは <folder>）
-            const where = /^[\w./][\w./-]*$/.test(ledger) ? ledger : '<folder>';
+            const where = shownFolder(ledger);
             console.log(initText(r, ledger, [
                 ...(r.created.length ? [where === '.' ? 'git add .agents && git commit -m "Start the ledger"' : `git -C ${where} add .agents && git -C ${where} commit -m "Start the ledger"`] : []),
                 `plainhub post --ledger ${where} --thread <thread> --role dev --verdict info --summary "<one line>"`,
                 `plainhub decide --ledger ${where} --id <thread>-release --summary "<question for a person>"`,
-            ]));
+            ], openLinkText(ledger, { dir: '.agents' }, { sync: syncHint(ledger) })));
             return;
         }
         if (values.language !== undefined) throw new LedgerError('--language is only for ledger init');

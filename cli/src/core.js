@@ -140,6 +140,30 @@ export function buildUrl(options, { token, env } = {}) {
     return url;
 }
 
+// git の remote の URL → GitHub の 'owner/name'（GitHub でない・形が違えば null）。鍵や user は読み捨てる（返すのは owner/name だけ・PG3）
+//   https・ssh・git の URL と scp の形（github.com:owner/name.git の前に user と ＠ が付く形）。ホストは github.com だけ
+const GITHUB_OWNER = /^[A-Za-z0-9][A-Za-z0-9-]{0,38}$/;
+const GITHUB_NAME = /^[A-Za-z0-9._-]{1,100}$/;
+export function githubRepoFromRemote(remote) {
+    if (typeof remote !== 'string') return null;
+    const s = remote.trim();
+    let host, path;
+    if (/^[a-z][a-z0-9+.-]*:\/\//i.test(s)) {
+        let u;
+        try { u = new URL(s); } catch { return null; }
+        if (!['https:', 'http:', 'ssh:', 'git:', 'git+ssh:', 'ssh+git:'].includes(u.protocol) || u.search || u.hash || /[?#]/.test(s)) return null;
+        [host, path] = [u.hostname, u.pathname];
+    } else {
+        const scp = /^(?:[^@/\s:]+@)?([^@/\s:]+):([^\s]+)$/.exec(s);
+        if (!scp) return null;
+        [host, path] = [scp[1], scp[2]];
+    }
+    if (host.toLowerCase() !== 'github.com') return null;
+    const m = /^\/?([^/]+)\/([^/]+?)(?:\.git)?\/?$/.exec(path);
+    if (!m || !GITHUB_OWNER.test(m[1]) || !GITHUB_NAME.test(m[2]) || /^\.+$/.test(m[2])) return null;
+    return `${m[1]}/${m[2]}`;
+}
+
 // 開く（CLI・MCP の open・browse・diff の共通の入口）。行き先を先に確かめ、本番でなければトークンを読みもしない
 //   shown はトークンを除いた URL。withheld はトークンを頼まれたが本番でないので付けなかった時の一言
 export async function openPlainHub(options, { withToken = false, open = true, env } = {}) {

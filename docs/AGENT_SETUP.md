@@ -2,7 +2,7 @@
 
 This page is for an AI coding assistant (such as Claude Code) that a person asked to set up PlainHub's "Your agent" on their PC. "Your agent" lets the person ask their own Claude Code questions from the PlainHub AI panel (app.plainhub.dev), on this PC or from their phone. People can read the [setup guide](YOUR_AGENT.md) instead.
 
-This page matches plainhub 1.6.0.
+This page matches plainhub 1.6.1.
 
 ## What you must not do
 
@@ -25,7 +25,7 @@ Node.js 18 or later is needed. If `node` is not found or is older, stop here and
 
 ## 2. Install
 
-If `plainhub --version` doesn't work, or shows a version older than 1.6.0, run:
+If `plainhub --version` doesn't work, or shows a version older than 1.6.1, run:
 
 ```bash
 npm i -g plainhub

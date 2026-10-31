@@ -12,7 +12,7 @@ import { lstatSync, mkdirSync, openSync, writeSync, closeSync, readdirSync, read
 import { join, relative, resolve, isAbsolute, sep, basename, dirname } from 'path';
 import { randomBytes } from 'crypto';
 import { spawnSync } from 'child_process';
-import { LEDGER_ACCESS } from './core.js';
+import { LEDGER_ACCESS, buildUrl, githubRepoFromRemote, resolveBaseUrl, TargetError } from './core.js';
 
 export const ROLES = ['dev', 'reviewer', 'security', 'daily', 'owner', 'cockpit'];
 // 誰でも使う芯の担当（ledger init の schema.md に載せる）。daily・cockpit は PlainHub の自律改善ループが足す担当（道具は今までどおり受け付ける）
@@ -629,7 +629,7 @@ export function initLedger({ ledger, language = DEFAULT_LANGUAGE }) {
 }
 
 // CLI・MCP の出力（作った・残したファイルと部屋の言葉は同じ文。next: 次の手順の行。最後に鍵が要らないこと・PlainHub で見る時の権限＝gen-125）
-export function initText(r, ledger, next) {
+export function initText(r, ledger, next, link) {
     return [
         ...r.created.map((p) => `created ${p}`),
         ...r.kept.map((p) => `kept ${p} (already there, not changed)`),
@@ -637,6 +637,7 @@ export function initText(r, ledger, next) {
         languageNote(roomLanguage(ledger)),
         'Next:',
         ...next.map((l) => `  ${l}`),
+        ...(link ? ['', link] : []),
         '',
         LEDGER_ACCESS,
     ].join('\n');
@@ -667,21 +668,21 @@ function gitMessage(text) {
 }
 
 // git を1回（シェルを通さない・入力は渡さない＝MCP の入力をつかまない・ログインや ssh の問い合わせで止まらない）
-function git(root, args) {
+function git(root, args, { timeout = GIT_TIMEOUT } = {}) {
     const env = { ...process.env, GIT_TERMINAL_PROMPT: '0' };
     for (const k of GIT_LOCAL_ENV) delete env[k];
     if (!env.GIT_SSH_COMMAND && !env.GIT_SSH) env.GIT_SSH_COMMAND = 'ssh -o BatchMode=yes';
     const r = spawnSync('git', ['-C', root, ...args], {
-        encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], timeout: GIT_TIMEOUT, windowsHide: true, env, maxBuffer: 64 * 1024 * 1024,
+        encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], timeout, windowsHide: true, env, maxBuffer: 64 * 1024 * 1024,
     });
     if (r.error) {
         if (r.error.code === 'ENOENT') throw new LedgerError('git is not installed (install Git, then sync again)');
-        if (r.error.code === 'ETIMEDOUT') throw new LedgerError(`git did not finish in ${GIT_TIMEOUT / 1000} seconds (check the network and that git push works in a terminal)`);
+        if (r.error.code === 'ETIMEDOUT') throw new LedgerError(`git did not finish in ${timeout / 1000} seconds (check the network and that git push works in a terminal)`);
         throw new LedgerError(`git failed (${safeText(r.error.code || 'error')})`);
     }
     return { ok: r.status === 0, out: r.stdout || '', err: r.stderr || '' };
 }
-const gitOut = (root, args) => { const r = git(root, args); return r.ok ? r.out.trim() : null; };
+const gitOut = (root, args, opts) => { const r = git(root, args, opts); return r.ok ? r.out.trim() : null; };
 const zList = (out) => out.split('\0').filter(Boolean);
 
 function gitStateInProgress(root) {
@@ -852,6 +853,62 @@ export function syncText(r) {
     ].join('\n');
 }
 
+// ---- PlainHub で開くリンク（gen-418・GOAL PG3）----
+//   init・post・decide の後に、書いたファイル（init は .agents のフォルダ）を PlainHub で開く URL を返す（スマホでも開ける・カードはボタンで承認）
+//   リポ（owner/name）は今のブランチの upstream の remote（無ければ origin）の URL から、ブランチは upstream の先（無ければ今のブランチ）
+//   URL の組み立ては core.js の buildUrl だけ（トークンは付けない＝人に見せる・貼る用）。remote の URL そのもの（鍵・user）は出さない
+//   GitHub の remote が無い・git でない時は、リンクの代わりに push すれば開ける旨。書いた後に呼ぶので、ここで失敗しても止めない
+
+const BASE_ENV_NOTE = 'PLAINHUB_APP_URL is not an allowed address (unset it to use PlainHub)';
+// 設定を読むだけなので短く待つ（post・decide が git で長く止まらない）。名前がこれより長ければリンクを作らない
+const LINK_GIT_TIMEOUT = 5000;
+const LINK_NAME_MAX = 255;
+
+// target: { path } か { dir }（台帳のフォルダから見た位置・/ 区切り）。sync: 送り方の案内（CLI と MCP で違う）。card: 判断カード
+export function openLinkText(ledger, target, { env = process.env, sync, card = false } = {}) {
+    const rel = (target.path ?? target.dir).split(sep).join('/');
+    let base;
+    try { base = resolveBaseUrl(env); }
+    catch (e) { if (e instanceof TargetError) return `No PlainHub link: ${BASE_ENV_NOTE}`; throw e; }
+    const what = target.dir ? `the ledger (${rel})` : 'it';
+    const scene = `in PlainHub, on your phone too${card ? ', and approve or decline it with a button' : ''}`;
+    const later = (why, how) => `${why} To open ${rel} ${scene}: ${how}, then open it in ${base}`;
+    try {
+        const root = ledgerRoot(ledger);
+        const read = (args) => {
+            const v = gitOut(root, args, { timeout: LINK_GIT_TIMEOUT });
+            if (v && v.length > LINK_NAME_MAX) throw new LedgerError('too long');
+            return v;
+        };
+        if (read(['rev-parse', '--is-inside-work-tree']) !== 'true') {
+            return later('This folder is not in a Git repository yet.', 'git init, put the repository on GitHub and push it');
+        }
+        const prefix = read(['rev-parse', '--show-prefix']) || '';
+        const branch = read(['symbolic-ref', '--quiet', '--short', 'HEAD']);
+        const up = branch ? read(['config', '--get', `branch.${branch}.remote`]) : null;
+        const merge = branch ? read(['config', '--get', `branch.${branch}.merge`]) : null;
+        const remote = up && up !== '.' && !up.startsWith('-') ? up : 'origin';
+        // PlainHub が読むのは push した先のリポ（pushurl があればそれ）
+        const remoteUrl = read(['remote', 'get-url', '--push', remote]);
+        const repo = githubRepoFromRemote(remoteUrl);
+        // ブランチが無い（detached HEAD）時は、ブランチを作って送る
+        const pushTo = branch ? safeText(branch) : '<branch>';
+        const onBranch = branch ? '' : 'switch to a branch (git switch -c <branch>), ';
+        if (!repo) {
+            return remoteUrl
+                ? later(`The remote ${safeText(remote)} is not a GitHub repository that PlainHub can open.`, `${onBranch}push the repository to GitHub`)
+                : later('No GitHub remote yet.', `${onBranch}put the repository on GitHub and push it (git remote add origin https://github.com/<you>/<repo>.git, then git push -u origin ${pushTo})`);
+        }
+        const upstream = up && merge && merge.startsWith('refs/heads/') ? merge.slice('refs/heads/'.length) : null;
+        const share = upstream ? sync : `${onBranch}commit .agents, then git push -u ${safeText(remote)} ${pushTo}`;
+        const where = target.path ? { path: prefix + rel } : { dir: prefix + rel };
+        const url = buildUrl({ repo, ...where, ...(upstream || branch ? { branch: upstream || branch } : {}) }, { env });
+        return `Open ${what} ${scene}, once it is pushed (${share}): ${url}`;
+    } catch {
+        // git が無い・時間切れ・長すぎる名前など。書いた物はもうあるので止めない
+        return later('No PlainHub link: Git could not be read.', 'push the repository to GitHub');
+    }
+}
 // ---- 確かめる ----
 
 // .agents の中を全部たどる（リンクはたどらない）。読めない・深すぎる・多すぎるは問題として数える（黙って通さない）
@@ -1483,6 +1540,7 @@ function mcpLedger(env) {
 // owner の代わりに使える芯の担当（人の判断は PlainHub の画面のボタンで）
 const MCP_CORE_ROLES = CORE_ROLES.filter((r) => !MCP_DENIED_ROLES.includes(r));
 
+const MCP_SYNC = 'plainhub_ledger_sync';
 const mcpText = (text, isError = false) => ({ content: [{ type: 'text', text }], ...(isError ? { isError: true } : {}) });
 
 function mcpRun(fn) {
@@ -1505,7 +1563,7 @@ export async function mcpPost(params, env = process.env) {
         }
         const { thread, role, verdict, summary, commit, body = '' } = params;
         const r = postMessage({ ledger: mcpLedger(env), thread, role, verdict, summary, commit, body });
-        return `Posted ${r.id}: ${r.rel}\n${languageNote(roomLanguage(env.PLAINHUB_LEDGER))}`;
+        return `Posted ${r.id}: ${r.rel}\n${languageNote(roomLanguage(env.PLAINHUB_LEDGER))}\n${openLinkText(env.PLAINHUB_LEDGER, { path: r.rel }, { env, sync: MCP_SYNC })}`;
     });
 }
 
@@ -1515,7 +1573,7 @@ export async function mcpDecide(params, env = process.env) {
         if (params.refs !== undefined) throw new LedgerError('refs is renamed to ref; nothing was written');
         const { id, summary, ref, body = '' } = params;
         const r = createDecision({ ledger: mcpLedger(env), id, summary, ref, body });
-        return `Decision card created (pending): ${r.rel}\n${languageNote(roomLanguage(env.PLAINHUB_LEDGER))}`;
+        return `Decision card created (pending): ${r.rel}\n${languageNote(roomLanguage(env.PLAINHUB_LEDGER))}\n${openLinkText(env.PLAINHUB_LEDGER, { path: r.rel }, { env, sync: MCP_SYNC, card: true })}`;
     });
 }
 
@@ -1525,7 +1583,7 @@ export async function mcpLedgerInit(params, env = process.env) {
         return initText(r, env.PLAINHUB_LEDGER, [
             ...(r.created.length ? ['commit .agents in the PLAINHUB_LEDGER folder (git add .agents && git commit)'] : []),
             'plainhub_post adds a message to a thread; plainhub_decide raises a card for a person',
-        ]);
+        ], openLinkText(env.PLAINHUB_LEDGER, { dir: '.agents' }, { env, sync: MCP_SYNC }));
     });
 }
 

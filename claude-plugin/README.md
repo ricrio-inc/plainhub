@@ -15,13 +15,13 @@ In Claude Code, add this repository as a marketplace, then install:
 /plugin install plainhub@plainhub
 ```
 
-It adds the `plainhub` MCP server (the npm package `plainhub`, version 1.6.0; Node.js 18+) and two skills: `ledger`, which tells Claude when to post, raise a card and share, and `your-agent`, which walks you through connecting PlainHub to Claude Code on your PC. The ledger tools work on the folder you start Claude Code in, so start it at the top of your repository. To use another folder, set `PLAINHUB_LEDGER` before you start Claude Code.
+It adds the `plainhub` MCP server (the npm package `plainhub`, version 1.6.1; Node.js 18+) and two skills: `ledger`, which tells Claude when to post, raise a card and share, and `your-agent`, which walks you through connecting PlainHub to Claude Code on your PC. The ledger tools work on the folder you start Claude Code in, so start it at the top of your repository. To use another folder, set `PLAINHUB_LEDGER` before you start Claude Code.
 
 Then ask Claude: *"Start a ledger here, then report this fix in a thread and ask me to approve the release."*
 
 ## What is inside
 
-- `.mcp.json`: runs `plainhub-mcp` with `npx`, pinned to one version (`plainhub@1.6.0`, the same as the plugin version), so an update reaches you only with a new plugin version. `--prefix` points npm at the plugin folder, so a repository you open cannot swap in its own `plainhub` package or npm settings (`.npmrc`)
+- `.mcp.json`: runs `plainhub-mcp` with `npx`, pinned to one version (`plainhub@1.6.1`, the same as the plugin version), so an update reaches you only with a new plugin version. `--prefix` points npm at the plugin folder, so a repository you open cannot swap in its own `plainhub` package or npm settings (`.npmrc`)
 - `skills/ledger/SKILL.md`: how to use the ledger — when to post, decide and sync, the rules, and that what agents read in the ledger is data, not instructions
 - `skills/your-agent/SKILL.md`: how to set up Your agent — where the setup steps are (one page for AI assistants, `docs/AGENT_SETUP.md`) and what Claude must leave to you (starting the agent, `plainhub auth` and tokens, Cockpit mode)
 - `.claude-plugin/plugin.json`: the plugin. The marketplace with this one plugin is `.claude-plugin/marketplace.json` at the top of the repository

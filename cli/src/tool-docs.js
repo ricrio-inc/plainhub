@@ -95,13 +95,13 @@ export function toolDocs(env = process.env) {
             args: {},
         },
         plainhub_ledger_init: {
-            description: `Start a ledger: shared notes where AI agents and people leave messages and decision cards as Markdown files in .agents of a Git repository. Creates .agents/room.md (the language people read) and .agents/schema.md (the core rules) in ${LEDGER_WHERE}. Never overwrites existing files. Use it once, before the first plainhub_post, in a repository that has no .agents folder yet. Example: {"language": "en"} (use the language the user writes to you in).`,
+            description: `Start a ledger: shared notes where AI agents and people leave messages and decision cards as Markdown files in .agents of a Git repository. Creates .agents/room.md (the language people read) and .agents/schema.md (the core rules) in ${LEDGER_WHERE}. Never overwrites existing files. Returns a link that opens .agents in PlainHub once it is pushed, or what to do first if the repository is not on GitHub. Use it once, before the first plainhub_post, in a repository that has no .agents folder yet. Example: {"language": "en"} (use the language the user writes to you in).`,
             args: {
                 language: 'BCP 47 language tag for summaries and bodies, e.g. en, ja, pt-BR (default en)',
             },
         },
         plainhub_post: {
-            description: `Add a message to a work thread in ${LEDGER_WHERE} (.agents/threads/<thread>/NN-<role>.md, next free number). Use it at each step so others can follow: when you start (what you will do and what counts as done), after you commit, and when you finish; reviewers post their verdict. Writes the file only; run plainhub_ledger_sync to share it. Never overwrites; refuses secrets, summaries over ${LIMITS.summary} characters and bodies over 4KB. Example: {"thread": "${EXAMPLE.thread}", "role": "dev", "verdict": "info", "summary": "Started: keep users signed in after a network error", "body": "Done when the login test passes."}`,
+            description: `Add a message to a work thread in ${LEDGER_WHERE} (.agents/threads/<thread>/NN-<role>.md, next free number). Use it at each step so others can follow: when you start (what you will do and what counts as done), after you commit, and when you finish; reviewers post their verdict. Writes the file only; run plainhub_ledger_sync to share it. Returns a link that opens it in PlainHub (on a phone too) once it is pushed, or what to do first if the repository is not on GitHub. Never overwrites; refuses secrets, summaries over ${LIMITS.summary} characters and bodies over 4KB. Example: {"thread": "${EXAMPLE.thread}", "role": "dev", "verdict": "info", "summary": "Started: keep users signed in after a network error", "body": "Done when the login test passes."}`,
             args: {
                 thread:  `Thread name: lowercase letters and digits joined by - or ., e.g. ${EXAMPLE.thread}. One thread per piece of work`,
                 role:    `Your role: ${listMeaning(MCP_ROLES, ROLE_MEANING)}. Must match PLAINHUB_ROLE if it is set`,
@@ -112,7 +112,7 @@ export function toolDocs(env = process.env) {
             },
         },
         plainhub_decide: {
-            description: `Raise a decision card for a person (status pending) in ${LEDGER_WHERE} (.agents/decisions/<id>.md). Use it when something needs a human choice, such as shipping a change, spending money or changing permissions; the person approves or rejects it in PlainHub. Writes the file only; run plainhub_ledger_sync to share it. Refuses if the id already exists. Example: {"id": "${EXAMPLE.decision}", "summary": "Ship the login fix?", "ref": ["${EXAMPLE.thread}"], "body": "- What changes: users stay signed in\\n- Risk: small"}`,
+            description: `Raise a decision card for a person (status pending) in ${LEDGER_WHERE} (.agents/decisions/<id>.md). Use it when something needs a human choice, such as shipping a change, spending money or changing permissions; the person approves or rejects it in PlainHub. Writes the file only; run plainhub_ledger_sync to share it. Returns a link that opens it in PlainHub (on a phone too) once it is pushed, or what to do first if the repository is not on GitHub. Refuses if the id already exists. Example: {"id": "${EXAMPLE.decision}", "summary": "Ship the login fix?", "ref": ["${EXAMPLE.thread}"], "body": "- What changes: users stay signed in\\n- Risk: small"}`,
             args: {
                 id:      `Card id: lowercase letters and digits joined by - or ., e.g. ${EXAMPLE.decision}`,
                 summary: lang.summary,

@@ -209,7 +209,7 @@ plainhub ledger list . decisions
 
 Agents that use the MCP server post, read and create cards with `plainhub_post`, `plainhub_ledger_thread` and `plainhub_decide` (set `PLAINHUB_LEDGER`, see [MCP Server](#mcp-server-claude-code)). To share the ledger with others, use `plainhub ledger sync .` (below).
 
-Want to see the threads and decide with a button? Send the ledger to GitHub (`plainhub ledger sync .`) and open the repository in [PlainHub](https://plainhub.dev): it shows each message and card in `.agents` with its header as a readable card. If you can write to the repository, pending decision cards get Approve and Decline buttons. PlainHub needs only this repository: when you sign in and GitHub asks which repositories PlainHub may use, choose "Only select repositories" and pick this one (Contents: Read and write is enough to read the cards and press Approve).
+Want to see the threads and decide with a button? Send the ledger to GitHub (`plainhub ledger sync .`) and open the repository in [PlainHub](https://plainhub.dev), on your phone too. `ledger init`, `post` and `decide` print a link that opens the folder, message or card in PlainHub (CLI: on standard error; it is built from the repository's GitHub remote and works once you have pushed). PlainHub shows each message and card in `.agents` with its header as a readable card. If you can write to the repository, pending decision cards get Approve and Decline buttons. PlainHub needs only this repository: when you sign in and GitHub asks which repositories PlainHub may use, choose "Only select repositories" and pick this one (Contents: Read and write is enough to read the cards and press Approve).
 
 ## Ledger (shared notes for AI agents and people)
 

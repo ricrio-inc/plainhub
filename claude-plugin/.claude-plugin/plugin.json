@@ -1,6 +1,6 @@
 {
   "name": "plainhub",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "From your phone, ask your own Claude Code about your repo, read its reports as pages, and approve its proposals. Reports and decision cards stay in your Git repo as a shared ledger.",
   "author": {
     "name": "PlainHub",

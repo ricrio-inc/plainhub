@@ -13,7 +13,7 @@ Be clear about what the agent can do, especially if the person asks about safety
 
 The setup steps for an AI assistant are on one page, for the same `plainhub` version as this plugin:
 
-https://raw.githubusercontent.com/ricrio-inc/plainhub/cli-v1.6.0/docs/AGENT_SETUP.md
+https://raw.githubusercontent.com/ricrio-inc/plainhub/cli-v1.6.1/docs/AGENT_SETUP.md
 
 Read that page (only that page) and follow it from top to bottom. In short, it has you check Node.js with `node -v`, install with `npm i -g plainhub` if needed, check the PC with `plainhub doctor`, ask the person which folder to use, ask whether they want to ask on this PC or from their phone, and tell them the exact command to start the agent in their own terminal. Then they connect in PlainHub: “Settings” → “AI” → “Connect your own agent” → “On this PC” or “From your phone”.
 
@@ -21,7 +21,9 @@ If you can't open that page, check `node -v`, install with `npm i -g plainhub` i
 
 https://github.com/ricrio-inc/plainhub/blob/main/docs/YOUR_AGENT.md
 
-## What you must not do
+## Leave these to the person
+
+These steps stay in the person's hands, so they stay in control of their PC and GitHub account.
 
 - Don't start `plainhub agent` yourself. It has to keep running in the person's own terminal after this conversation ends — tell them the exact command instead
 - Don't run `plainhub auth`, and don't ask for, read, copy or store GitHub tokens. The person runs `plainhub auth` themselves
