@@ -4,12 +4,12 @@
     "name": "PlainHub",
     "url": "https://plainhub.dev"
   },
-  "description": "PlainHub's plugin for Claude Code: the shared ledger for AI agents and people.",
+  "description": "From your phone, ask your own Claude Code about your repo, read its reports as pages, and approve its proposals. Reports and decision cards stay in your Git repo as a shared ledger.",
   "plugins": [
     {
       "name": "plainhub",
       "source": "./claude-plugin",
-      "description": "A shared ledger for AI agents and people in your Git repository: agents post messages and raise decision cards, a person decides."
+      "description": "From your phone, ask your own Claude Code about your repo, read its reports as pages, and approve its proposals. Reports and decision cards stay in your Git repo as a shared ledger."
     }
   ]
 }
