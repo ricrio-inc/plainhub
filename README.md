@@ -7,7 +7,7 @@ Open, write and save Markdown and plain-text files in your own GitHub repos from
 [![Try PlainHub](https://img.shields.io/badge/Try%20PlainHub-app.plainhub.dev-blue?style=for-the-badge)](https://app.plainhub.dev)
 [![npm version](https://img.shields.io/npm/v/plainhub)](https://www.npmjs.com/package/plainhub)
 
-[Website](https://plainhub.dev) · ▶ [30-second intro (YouTube)](https://youtu.be/2ThRzBnGxoE) · [Documentation](#documentation) · [日本語ドキュメント](docs/ja/README.md)
+[Website](https://plainhub.dev) · ▶ [30-second intro (YouTube)](https://youtu.be/2ThRzBnGxoE) · [Documentation](#documentation) · [日本語ドキュメント](docs/ja/README.md) · [Why I built it](https://plainhub.dev/guides/phone-notes-github)
 
 ![PlainHub: write a note, it is saved as a commit, check the history, ask AI for an edit and apply it](docs/images/hero.gif)
 

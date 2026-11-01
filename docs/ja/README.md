@@ -7,7 +7,7 @@
 [![PlainHub を試す](https://img.shields.io/badge/PlainHub%20を試す-app.plainhub.dev-blue?style=for-the-badge)](https://app.plainhub.dev)
 [![npm version](https://img.shields.io/npm/v/plainhub)](https://www.npmjs.com/package/plainhub)
 
-[Web サイト](https://plainhub.dev/ja/) · ▶ [30秒の紹介動画（YouTube・英語）](https://youtu.be/2ThRzBnGxoE) · [English Documentation](../../README.md)
+[Web サイト](https://plainhub.dev/ja/) · ▶ [30秒の紹介動画（YouTube・英語）](https://youtu.be/2ThRzBnGxoE) · [English Documentation](../../README.md) · [作った理由](https://plainhub.dev/ja/guides/phone-notes-github)
 
 ![PlainHub: メモを書くと保存されてコミットになり、履歴を確かめ、AI に直しを頼んで適用する](../images/hero.gif)
 
