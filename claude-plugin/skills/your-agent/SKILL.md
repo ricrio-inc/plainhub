@@ -13,7 +13,7 @@ Be clear about what the agent can do, especially if the person asks about safety
 
 The setup steps for an AI assistant are on one page, for the same `plainhub` version as this plugin:
 
-https://raw.githubusercontent.com/ricrio-inc/plainhub/cli-v1.6.1/docs/AGENT_SETUP.md
+https://raw.githubusercontent.com/ricrio-inc/plainhub/cli-v1.7.0/docs/AGENT_SETUP.md
 
 Read that page (only that page) and follow it from top to bottom. In short, it has you check Node.js with `node -v`, install with `npm i -g plainhub` if needed, check the PC with `plainhub doctor`, ask the person which folder to use, ask whether they want to ask on this PC or from their phone, and tell them the exact command to start the agent in their own terminal. Then they connect in PlainHub: “Settings” → “AI” → “Connect your own agent” → “On this PC” or “From your phone”.
 

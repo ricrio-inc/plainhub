@@ -6,7 +6,7 @@
 export const EVENT_VERSION = 1;
 // 出来事の種類: text（答えの文の追加）・tool（道具の使用・target は読んでいる場所）・thinking（考えている）・
 //   permission（Cockpit モードだけ: Claude Code が道具を使う前に本人の承認を求めている・id への答えで続く）・
-//   stopped（止めた・reason は STOP_REASONS）・error（kind は ERROR_KINDS・message は人に見せる文）・done（いつも最後に1つ・end は END_STATES・今の起動のしかた＝mode など hello と同じ形も付ける）
+//   stopped（止めた・reason は STOP_REASONS）・error（kind は ERROR_KINDS・message は人に見せる文）・done（いつも最後に1つ・end は END_STATES・今の起動のしかた＝mode など hello と同じ形も付ける・会話の番号があれば作業フォルダ cwd も＝U1）
 //   accepted（連投・QM1: Claude Code がこの送信を受け取った＝--replay-user-messages の印・会話の番号 sessionId つき）・turn_end（Claude Code の1回の作業が終わった＝result）
 //   self（QM0b: 答えのあいだに Claude Code が自分で始めた作業の始まり・why は 'scheduled'＝予約／'task'＝裏で頼んだ Agent が動いている／'background'＝裏の作業の結果を受けて続けた。PC の /watch の流れだけ・
 //   その流れの出来事にはどれも answer＝その作業の番号が付く）
@@ -74,6 +74,16 @@ export const GH_OPS = { create_repo: 'gh repo create', create_issue: 'gh issue c
 // 確認のカードを出す操作（AUTO_AGENT_RISKS）は、本人が読んで押すまで待つ → 画面の答えを待つ時間は答えの時間切れと同じ（ACTION_TIMEOUT_MS は見た目の操作だけ）
 export const CARD_ACTION_TIMEOUT_MS = ASK_TIMEOUT_MS;
 export const SESSION_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+// 「PC で続ける」（U1）: 中継役は答えの done に作業フォルダ（cwd・絶対パス）を付け、AI パネルが `cd <cwd> && claude --resume <会話の番号>` をコピーさせる。
+//   付けてよい・出してよいフォルダはこの形だけ（中継役もブラウザも同じ式）: / か C:\ で始まり、使ってよい文字は決めたものだけ＝文字・数字・
+//   空白・. _ + - / \ : ( )（禁じる文字を並べる形にしない: PowerShell は飾りの引用符 “ ” „ も " と読む＝gen-437 G3 高。見えない文字・
+//   似た記号・全角の引用符も入らない・ハングルの埋め字や見えない結合文字＝Default_Ignorable は文字の仲間でも外す・gen-438）。末尾の \ も外す（"…" の閉じを bash が読み飛ばす・G3 低）。
+//   / や \ が2つ続くものも外す（//host/share の形の共有フォルダは PowerShell 7・Git Bash の cd で外のサーバーへつなぎに行きうる＝gen-437 G3 2巡目の中）。
+//   どの区切りでも net・Network・afs（大文字小文字を問わない・K のケルビン記号と ſ の畳み込みも）なら外す（macOS は既定で /net を自動でつなぎ、
+//   cd だけで相手のマシンへつなぎに行く・Linux も autofs で同じ＝gen-438 G3 中。最初の区切りだけを見ると /Volumes/Macintosh HD/net・
+//   小文字の /system/volumes/data/net・/proc/self/root/net で回り込める＝U1a・/home/me/net のようなフォルダでも出ないが危なくはない）。. と .. の区切りも外す（/tmp/../net で回り込めない）。
+//   貼って打つコマンドなので、読んだとおりに動くものだけ。合わなければ送らない・ボタンを出さない
+export const RESUME_FOLDER = /^(?!.*\\$)(?!.*[\/\\]{2})(?!(?:.*[\/\\])?\.{1,2}(?:[\/\\]|$))(?!.*[\/\\](?:[Nn][Ee][Tt]|[Nn][Ee][Tt][Ww][Oo][Rr][Kk\u212A]|[Aa][Ff][Ss\u017F])(?:[\/\\]|$))(?:\/|[A-Za-z]:\\)(?:(?!\p{Default_Ignorable_Code_Point})[\p{L}\p{M}\p{N} ._+\-\/\\:()]){0,500}$/u;
 
 // Claude Code の起動の決まり（中継役の中だけで使う・H2a・docs/design/DESIGN_handsfree_agent.md §6）
 //   read（既定・一般の人）: 読むだけ・フォルダの外は読まない・MCP なし・利用者の設定（許可の規則・既定のモード）を読まない・確認が要るものは全部断る

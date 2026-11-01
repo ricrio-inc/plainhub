@@ -10,7 +10,7 @@ import { randomUUID } from 'crypto';
 import { existsSync, statSync, readFileSync, readdirSync } from 'fs';
 import { join, delimiter, isAbsolute, resolve as resolvePath, relative } from 'path';
 import { homedir } from 'os';
-import { EVENT_VERSION, ASK_TIMEOUT_MS, IDLE_MS, KILL_GRACE_MS, MAX_ALIVE, MAX_QUEUED, INTERRUPT_GRACE_MS, MAX_ANSWER, MAX_PROMPT, MAX_CONTENT, IMAGE_MEDIA_TYPE, MAILBOX_IMAGES, mailboxImagePath, MAX_EVENTS, MAX_PERMISSION_TEXT, MAX_ACTIONS, ACTION_TIMEOUT_MS, MAX_ACTION_RESULT, MAX_ACTION_CALLS, RISKS, RISK_ANNOTATIONS, AGENT_RISKS, AUTO_AGENT_RISKS, GH_OPS, CARD_ACTION_TIMEOUT_MS, SESSION_ID, MESSAGES, AGENT_MODES, PERMISSION_MODES, PLAN_TOOLS, FILE_TOOLS, FOLDER_SETTINGS, PARENT_SESSION_ENV, CLAUDE_ARGS as MODE_ARGS } from './agent-spec.js';
+import { EVENT_VERSION, ASK_TIMEOUT_MS, IDLE_MS, KILL_GRACE_MS, MAX_ALIVE, MAX_QUEUED, INTERRUPT_GRACE_MS, MAX_ANSWER, MAX_PROMPT, MAX_CONTENT, IMAGE_MEDIA_TYPE, MAILBOX_IMAGES, mailboxImagePath, MAX_EVENTS, MAX_PERMISSION_TEXT, MAX_ACTIONS, ACTION_TIMEOUT_MS, MAX_ACTION_RESULT, MAX_ACTION_CALLS, RISKS, RISK_ANNOTATIONS, AGENT_RISKS, AUTO_AGENT_RISKS, GH_OPS, CARD_ACTION_TIMEOUT_MS, SESSION_ID, RESUME_FOLDER, MESSAGES, AGENT_MODES, PERMISSION_MODES, PLAN_TOOLS, FILE_TOOLS, FOLDER_SETTINGS, PARENT_SESSION_ENV, CLAUDE_ARGS as MODE_ARGS } from './agent-spec.js';
 import { mcpArgs, mcpServer, mcpControl } from './agent-mcp.js';
 
 // 読むだけの起動（既定）。起動の決まりの正本は agent-spec.js の CLAUDE_ARGS（モードごと）
@@ -772,6 +772,7 @@ export function claudeRunner({ cwd, command = 'claude', platform = process.platf
         else signal?.addEventListener('abort', s.onAbort, { once: true });
     });
     run.mode = mode;
+    run.cwd = resolvePath(cwd || process.cwd());   // 会話を続けるフォルダ（U1: createAgentCore が答えの done に付ける）
     run.queue = true;   // 作業の途中の送信を書き足せる（createAgentCore が連投に使う）
     // 起動したままの Claude Code を全部閉じる（裏の作業・予約ごと止める・試験の後片付けなど）
     run.closeAll = () => { for (const p of [...alive]) p.close(); };
@@ -928,6 +929,7 @@ export function createAgentCore({ runner, timeoutMs = ASK_TIMEOUT_MS, maxAnswer 
     const sessions = new Set();   // この起動で始めた会話だけ続けられる（ほかの会話の中身を読ませない）
     const active = new Set();     // 答えている・待っている質問（{ stop(reason), finished, conv }）。どれも同じ1つの会話（conv）
     const mode = modeOf(runner?.mode);
+    const folder = typeof runner?.cwd === 'string' && RESUME_FOLDER.test(runner.cwd) ? runner.cwd : null;   // 会話を続けるフォルダ（U1・runner が知っている値だけ）
     const pending = new Map();    // 承認を待っている確認（id → { resolve, slot }）
     const settle = (id, allow) => {
         const p = pending.get(id);
@@ -1016,7 +1018,8 @@ export function createAgentCore({ runner, timeoutMs = ASK_TIMEOUT_MS, maxAnswer 
         if (reason === 'stopped' || reason === 'replaced') out({ type: 'stopped', reason });
         else if (reason === 'timeout') out({ type: 'error', kind: 'timeout', message: MESSAGES.timeout });
         // 答えのたびに今の起動のしかたも返す（AI パネルは、開いた後に中継役を --cockpit で起動し直しても次の答えで切り替えを出す・AM1）
-        out({ type: 'done', sessionId, end: reason || 'complete', ...modeInfo() });
+        //   会話の番号がある時は作業フォルダも（U1: AI パネルの「PC で続ける」が `cd <cwd> && claude --resume <番号>` にする・形は RESUME_FOLDER）
+        out({ type: 'done', sessionId, end: reason || 'complete', ...(sessionId && folder && { cwd: folder }), ...modeInfo() });
     };
     // この答え（slot）で待っている確認は全部断る（止めた・終わった後に答えても Claude Code に届かない）
     const dropPending = (slot) => {
