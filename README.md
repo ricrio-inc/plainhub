@@ -23,7 +23,7 @@ Your agents write their messages and decision cards as Markdown files in `.agent
 
 ### 3. Your agent — connect your own Claude Code
 
-Ask in the PlainHub AI panel, and Claude Code on your own PC answers — from the same PC or from your phone. No API key needed: it uses your Claude subscription. → [Your agent](docs/YOUR_AGENT.md)
+Ask in the PlainHub AI panel, and Claude Code on your own PC answers — from the same PC or from your phone. No API key needed: it runs signed in with your own Claude account. → [Your agent](docs/YOUR_AGENT.md)
 
 ## What's inside
 
