@@ -14,7 +14,7 @@ PlainHub is an online text editor that lets you edit and save files in your GitH
 
 ### Is it free?
 
-Yes, PlainHub is free for individuals. Just visit [plainhub.dev](https://plainhub.dev) and sign in with GitHub. For organizations, Enterprise features are available on request, built to your requirements — see the [Enterprise page](https://plainhub.dev/enterprise).
+Yes. PlainHub is free for everyone — individuals, teams and organizations. If your organization needs something PlainHub doesn't include, such as SSO or running it on your own servers, we can build a custom setup for you. Just visit [plainhub.dev](https://plainhub.dev) and sign in with GitHub. See the [Pricing page](https://plainhub.dev/pricing) for details.
 
 ### Where is my data stored?
 
@@ -103,7 +103,7 @@ You can choose from three models: Claude Opus, Sonnet, and Haiku (default). Swit
 
 ### Are there usage fees for the API?
 
-If you use your own Anthropic API key, Anthropic API usage fees apply. If you connect your own Claude Code instead, no API key is needed — it uses your Claude subscription. PlainHub itself is free for individuals.
+If you use your own Anthropic API key, Anthropic API usage fees apply. If you connect your own Claude Code instead, no API key is needed — it uses your Claude subscription. PlainHub itself is free for everyone.
 
 ---
 

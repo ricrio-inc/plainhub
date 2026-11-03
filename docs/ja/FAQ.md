@@ -14,7 +14,7 @@ PlainHub は、GitHub リポジトリのファイルをブラウザで直接編�
 
 ### 無料で使えますか？
 
-はい、個人は無料で使えます。[plainhub.dev](https://plainhub.dev) にアクセスして GitHub でサインインするだけです。組織向けには、ご要件に合わせて個別に機能を提供する Enterprise プランがあります（ご相談ください）。詳しくは[エンタープライズのページ](https://plainhub.dev/ja/enterprise)をご覧ください。
+はい。個人・チーム・組織、どなたも無料です。SSOや自社サーバーでの運用など、標準にない仕組みが必要な場合は、ご要望に合わせたカスタマイズ導入をご相談いただけます。[plainhub.dev](https://plainhub.dev) にアクセスして GitHub でサインインするだけです。詳しくは[料金のページ](https://plainhub.dev/ja/pricing)をご覧ください。
 
 ### データはどこに保存されますか？
 
@@ -103,7 +103,7 @@ Claude Opus、Sonnet、Haiku（デフォルト）の 3 モデルから選択で�
 
 ### API の利用料金はかかりますか？
 
-自分の Anthropic API キーを使う場合は、Anthropic の API 利用料金がかかります。自分の Claude Code をつなぐ場合は API キーは要らず、Claude のサブスクリプションを使います。PlainHub 自体は、個人は無料です。
+自分の Anthropic API キーを使う場合は、Anthropic の API 利用料金がかかります。自分の Claude Code をつなぐ場合は API キーは要らず、Claude のサブスクリプションを使います。PlainHub 自体は、どなたも無料です。
 
 ---
 

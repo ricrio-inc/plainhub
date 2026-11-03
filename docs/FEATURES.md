@@ -195,17 +195,19 @@ The most important design principle of PlainHub. Your files are saved only in yo
 
 ## Enterprise
 
+PlainHub is free for organizations too. When you need something the standard product doesn't include, we can build a custom setup to your requirements.
+
 ### Adoption Path
 
 | Phase | Target | Details |
 |-------|--------|---------|
 | **Free** | Individuals & small teams | Use all current PlainHub features (public/private repos) |
-| **Team** | Departments & projects | On request: GitHub Organization integration, member management, shared repositories (contact us) |
-| **Enterprise** | Company-wide | On request: SSO/SAML, MFA, audit logs, IP restrictions, custom domains, self-hosting, SLA (contact us) |
+| **Team** | Departments & projects | Free to use. Custom setup on request: GitHub Organization integration, member management, shared repositories (contact us) |
+| **Enterprise** | Company-wide | Free to use. Custom setup on request: SSO/SAML, MFA, audit logs, IP restrictions, custom domains, self-hosting, SLA (contact us) |
 
-### Enterprise Features
+### What a Custom Setup Can Add
 
-These features are not part of the standard product, but we can build and provide them to fit your requirements. [Contact us](https://plainhub.dev/enterprise) about the features you need.
+These features are not part of the standard product, but we can build them as a custom setup to fit your requirements. [Contact us](https://plainhub.dev/enterprise) about the features you need.
 
 - **GitHub Enterprise Server / Cloud support** — connect to on-premise GitHub
 - **SSO (SAML/OIDC)** — integrate with your existing identity provider
