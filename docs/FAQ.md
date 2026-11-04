@@ -14,7 +14,9 @@ PlainHub is an online text editor that lets you edit and save files in your GitH
 
 ### Is it free?
 
-Yes. PlainHub is free for everyone — individuals, teams and organizations. If your organization needs something PlainHub doesn't include, such as SSO or running it on your own servers, we can build a custom setup for you. Just visit [plainhub.dev](https://plainhub.dev) and sign in with GitHub. See the [Pricing page](https://plainhub.dev/pricing) for details.
+Yes. PlainHub is free for everyone — individuals, teams and organizations. If your organization needs something PlainHub doesn't include, such as SSO or running it on your own servers, we can build a custom setup for you.
+
+Just visit [plainhub.dev](https://plainhub.dev) and sign in with GitHub. See the [Pricing page](https://plainhub.dev/pricing) for details.
 
 ### Where is my data stored?
 

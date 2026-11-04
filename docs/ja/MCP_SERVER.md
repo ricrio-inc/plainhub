@@ -82,6 +82,7 @@ VS Code の MCP 設定に追加:
 | `plainhub_ledger_thread` | 作業のスレッドを順に読む |
 | `plainhub_ledger_tasks` | 台帳の課題の一覧 |
 | `plainhub_ledger_read` | 台帳のファイルを1つ読む |
+| `plainhub_agent_check` | Your agent を始める前にこの PC を確かめる（何も変えない） |
 
 ---
 

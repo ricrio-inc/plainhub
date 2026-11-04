@@ -82,6 +82,7 @@ Add to your VS Code MCP settings:
 | `plainhub_ledger_thread` | Read a work thread in order |
 | `plainhub_ledger_tasks` | List tasks in the ledger |
 | `plainhub_ledger_read` | Read one file of the ledger |
+| `plainhub_agent_check` | Check this PC before you start Your agent (changes nothing) |
 
 ---
 

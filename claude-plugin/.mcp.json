@@ -4,9 +4,8 @@
       "command": "npx",
       "args": [
         "-y",
-        "--prefix=${CLAUDE_PLUGIN_ROOT}",
-        "--package=plainhub@1.7.0",
-        "plainhub-mcp"
+        "plainhub@1.7.0",
+        "mcp"
       ],
       "env": {
         "PLAINHUB_LEDGER": "${PLAINHUB_LEDGER:-.}"

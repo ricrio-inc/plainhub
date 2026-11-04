@@ -9,6 +9,10 @@ description: Set up PlainHub's "Your agent", so the person can ask Claude Code o
 
 Be clear about what the agent can do, especially if the person asks about safety. By default, Claude Code only reads the folder the agent is started in. In Cockpit mode (which the person turns on themselves), the panel starts in Plan; if the person switches to Auto, Claude Code on their PC changes files and runs commands that it judges safe without asking, asks with a card for the rest, and can change files outside the folder once the person approves. That is why the folder matters: not their home folder itself, and not a folder with secrets.
 
+## Check this PC first
+
+Call the `plainhub_agent_check` tool of this plugin first. It changes nothing and works before the `plainhub` command is installed: it checks Node.js, Claude Code, the `plainhub` command, the ports and an agent already running, and whether a GitHub token for the phone is saved (never its value). Each problem comes with one line on how to fix it; when all is ready, its last line is the command the person runs in their own terminal. Call it again after fixing something. If the tool is not available, use `plainhub doctor` as in the steps below.
+
 ## Where the steps are
 
 The setup steps for an AI assistant are on one page, for the same `plainhub` version as this plugin:
@@ -25,7 +29,7 @@ https://github.com/ricrio-inc/plainhub/blob/main/docs/YOUR_AGENT.md
 
 These steps stay in the person's hands, so they stay in control of their PC and GitHub account.
 
-- Don't start `plainhub agent` yourself. It has to keep running in the person's own terminal after this conversation ends — tell them the exact command instead
+- Don't start `plainhub agent` yourself. It has to keep running in the person's own terminal after this conversation ends — tell them the exact command instead. Tell them `plainhub agent`, not `npx plainhub agent`: npx can run a copy of plainhub that the folder's `node_modules` brings with it, even with a version pinned
 - Don't run `plainhub auth`, and don't ask for, read, copy or store GitHub tokens. The person runs `plainhub auth` themselves
 - Don't use `--cockpit`. The person decides on Cockpit mode themselves, later
 - Don't use `sudo`, and don't run anything as an administrator

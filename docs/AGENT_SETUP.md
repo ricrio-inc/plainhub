@@ -6,7 +6,7 @@ This page matches plainhub 1.7.0.
 
 ## What you must not do
 
-- Don't start `plainhub agent` yourself. It has to keep running in the person's own terminal after this conversation ends — tell them the exact command instead
+- Don't start `plainhub agent` yourself. It has to keep running in the person's own terminal after this conversation ends — tell them the exact command instead. Tell them `plainhub agent`, not `npx plainhub agent`: npx can run a copy of plainhub that the folder's `node_modules` brings with it, even with a version pinned
 - Don't run `plainhub auth`, and don't ask for, read, copy or store GitHub tokens. The person runs `plainhub auth` themselves
 - Don't use `--cockpit`. The person decides on Cockpit mode themselves, later
 - Don't use `sudo`, and don't run anything as an administrator
