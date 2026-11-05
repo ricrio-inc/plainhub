@@ -177,6 +177,7 @@ plainhub diff abc1234 -r owner/repo --path src/main.js  # Diff for specific file
 | `plainhub_browse` | Open repository file browser |
 | `plainhub_auth` | Save a GitHub token (fine-grained: only the repositories you choose) |
 | `plainhub_auth_status` | Check authentication status |
+| `plainhub_agent_check` | Check this PC before you start Your agent (changes nothing) |
 
 ## Use without PlainHub
 

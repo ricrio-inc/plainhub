@@ -9,8 +9,9 @@ import { spawn, execFileSync, ChildProcess } from 'child_process';
 import { randomUUID } from 'crypto';
 import { existsSync, statSync, readFileSync, readdirSync } from 'fs';
 import { join, delimiter, isAbsolute, resolve as resolvePath, relative } from 'path';
+import { fileURLToPath } from 'url';
 import { homedir } from 'os';
-import { EVENT_VERSION, ASK_TIMEOUT_MS, IDLE_MS, KILL_GRACE_MS, MAX_ALIVE, MAX_QUEUED, INTERRUPT_GRACE_MS, MAX_ANSWER, MAX_PROMPT, MAX_CONTENT, IMAGE_MEDIA_TYPE, MAILBOX_IMAGES, mailboxImagePath, MAX_EVENTS, MAX_PERMISSION_TEXT, MAX_ACTIONS, ACTION_TIMEOUT_MS, MAX_ACTION_RESULT, MAX_ACTION_CALLS, RISKS, RISK_ANNOTATIONS, AGENT_RISKS, AUTO_AGENT_RISKS, GH_OPS, CARD_ACTION_TIMEOUT_MS, SESSION_ID, RESUME_FOLDER, MESSAGES, AGENT_MODES, PERMISSION_MODES, PLAN_TOOLS, FILE_TOOLS, FOLDER_SETTINGS, PARENT_SESSION_ENV, CLAUDE_ARGS as MODE_ARGS } from './agent-spec.js';
+import { EVENT_VERSION, ASK_TIMEOUT_MS, IDLE_MS, KILL_GRACE_MS, MAX_ALIVE, MAX_QUEUED, INTERRUPT_GRACE_MS, MAX_ANSWER, MAX_PROMPT, MAX_CONTENT, IMAGE_MEDIA_TYPE, MAILBOX_IMAGES, mailboxImagePath, MAX_EVENTS, MAX_PERMISSION_TEXT, MAX_ACTIONS, ACTION_TIMEOUT_MS, MAX_ACTION_RESULT, MAX_ACTION_CALLS, RISKS, RISK_ANNOTATIONS, AGENT_RISKS, AUTO_AGENT_RISKS, GH_OPS, CARD_ACTION_TIMEOUT_MS, SESSION_ID, RESUME_FOLDER, AGENT_VERSION, MESSAGES, AGENT_MODES, PERMISSION_MODES, PLAN_TOOLS, FILE_TOOLS, FOLDER_SETTINGS, PARENT_SESSION_ENV, CLAUDE_ARGS as MODE_ARGS } from './agent-spec.js';
 import { mcpArgs, mcpServer, mcpControl } from './agent-mcp.js';
 
 // 読むだけの起動（既定）。起動の決まりの正本は agent-spec.js の CLAUDE_ARGS（モードごと）
@@ -908,6 +909,16 @@ export function appendEvent(list, ev) {
     return list;
 }
 
+// 中継役の版（U1b・agent-spec.js の AGENT_VERSION）: cli/package.json の version。読めない・壊れた・形が違えば null（言わない）
+//   npm i -g plainhub で新しい版を入れると、動いている中継役の下の package.json も新しい版になる（中身は起動した時に読んだ古いまま）
+export const PACKAGE_FILE = fileURLToPath(new URL('../package.json', import.meta.url));
+export function packageVersion(file = PACKAGE_FILE) {
+    try {
+        const v = JSON.parse(readFileSync(file, 'utf8')).version;
+        return typeof v === 'string' && AGENT_VERSION.test(v) ? v : null;
+    } catch { return null; }
+}
+
 // 1つの芯（届け方ごとに1つ作る）。ask(question, emit, { signal }) は出来事を emit で返し、終わったら解決する
 //   question: cleanQuestion の形。signal: 使う人が止めた（ブラウザを閉じた・スマホの Stop。理由が 'replaced' なら新しい質問で止めた）
 //   出来事はどれも { v: EVENT_VERSION, type, ... }。最後は必ず { type: 'done', sessionId, end, mode, … }（end は agent-spec.js の END_STATES・mode などは modeInfo）
@@ -923,13 +934,15 @@ export function appendEvent(list, ev) {
 //   止める（stopAnswer(answer)）は今の作業だけ。時間切れは答えと同じ。Cockpit の確認は watch している画面があれば承認カードに、無ければ断る
 // userSettings: 利用者の Claude Code の設定のファイル（最初の権限のモードを読む・試験では一時ファイル）
 // takes: この届け方が受け取るもの（PC は { images, queue, watch, actions }・郵便受けは { images, queue, actions }＝QM4・IP3）。modeInfo に入れ、hello・pair・答えの done で同じに伝える（AM1q）
+// packageFile（U1b）: 中継役の版を読む package.json（試験では一時ファイル）。起動した時の版を agentVersion、今ディスクにある版が違えば installedVersion として modeInfo に入れる
 // 画面の見た目の操作（AX1）: Claude Code が一覧の道具を呼んだら { type: 'action', id, name, input } で知らせ、result(id, { ok, text }) の答えを道具の結果にする。
 //   actionTimeoutMs のうちに答えが無ければ（画面を閉じていた・郵便受けが届かない）、止めた・終わった時と同じく断りの文を返す。答えられるのは1回だけ
-export function createAgentCore({ runner, timeoutMs = ASK_TIMEOUT_MS, maxAnswer = MAX_ANSWER, userSettings, takes = {}, actionTimeoutMs = ACTION_TIMEOUT_MS, cardActionTimeoutMs = CARD_ACTION_TIMEOUT_MS } = {}) {
+export function createAgentCore({ runner, timeoutMs = ASK_TIMEOUT_MS, maxAnswer = MAX_ANSWER, userSettings, takes = {}, actionTimeoutMs = ACTION_TIMEOUT_MS, cardActionTimeoutMs = CARD_ACTION_TIMEOUT_MS, packageFile = PACKAGE_FILE } = {}) {
     const sessions = new Set();   // この起動で始めた会話だけ続けられる（ほかの会話の中身を読ませない）
     const active = new Set();     // 答えている・待っている質問（{ stop(reason), finished, conv }）。どれも同じ1つの会話（conv）
     const mode = modeOf(runner?.mode);
     const folder = typeof runner?.cwd === 'string' && RESUME_FOLDER.test(runner.cwd) ? runner.cwd : null;   // 会話を続けるフォルダ（U1・runner が知っている値だけ）
+    const agentVersion = packageVersion(packageFile);   // 起動した時の版（U1b・動いている中身の版）
     const pending = new Map();    // 承認を待っている確認（id → { resolve, slot }）
     const settle = (id, allow) => {
         const p = pending.get(id);
@@ -956,7 +969,13 @@ export function createAgentCore({ runner, timeoutMs = ASK_TIMEOUT_MS, maxAnswer 
 
     // AI パネルに伝える起動のしかた（hello・pair・郵便受けの agent.json・答えの done で同じ）。Cockpit の時だけ、選べる権限のモードと最初のモード。
     //   受け取るもの（takes）も付ける: 起動し直した後も、パネルは次の答えの done で連投・画像に気づく（ページを開き直さない・AM1q）
-    const modeInfo = () => ({ mode, ...(mode === 'cockpit' && { permissionModes: PERMISSION_MODES, defaultPermissionMode: userDefaultPermissionMode(userSettings) }), ...takes });
+    //   版（U1b）: 起動した時の版と、今ディスクにある版が違えばその版も（そのたびに読み直す・読めない間は付けない＝新しい版を入れている途中）
+    const versionInfo = () => {
+        if (!agentVersion) return {};
+        const installed = packageVersion(packageFile);
+        return { agentVersion, ...(installed && installed !== agentVersion && { installedVersion: installed }) };
+    };
+    const modeInfo = () => ({ mode, ...(mode === 'cockpit' && { permissionModes: PERMISSION_MODES, defaultPermissionMode: userDefaultPermissionMode(userSettings) }), ...takes, ...versionInfo() });
 
     // 承認カード（Cockpit モード）: 出して、本人の答え（answer）を待つ。止めた後・読むだけ・出せないカードは断る
     const askPermission = (slot, out) => card => new Promise((resolve) => {

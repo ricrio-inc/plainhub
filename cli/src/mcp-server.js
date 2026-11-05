@@ -8,6 +8,7 @@ import { openPlainHub, TargetError, openInBrowser, loadToken, saveToken, removeT
 import { createRequire } from 'module';
 import { mcpPost, mcpDecide, mcpLedgerDecisions, mcpLedgerThread, mcpLedgerTasks, mcpLedgerRead, mcpLedgerInit, mcpLedgerSync, VERDICTS, DECISION_FILTERS } from './ledger.js';
 import { toolDocs, MCP_ROLES, AUTH_SAFE_WAY } from './tool-docs.js';
+import { runDoctor, doctorText, localDeps } from './doctor.js';
 
 const require = createRequire(import.meta.url);
 const pkg = require('../package.json');
@@ -201,6 +202,18 @@ server.tool(
         path: z.string().describe(arg('plainhub_ledger_read', 'path')),
     },
     (params) => mcpLedgerRead(params)
+);
+
+// Your agent を始める前の確かめ（plainhub doctor と同じ runDoctor・読むだけ・gen-470 GOAL YA3）。npm の CLI が無くても、プラグインを入れた直後から呼べる
+//   何も変えない・鍵を読まない（localDeps('mcp')）・agent を起動しない。足りない所があっても道具の失敗にはしない（結果の文で伝える）
+server.tool(
+    'plainhub_agent_check',
+    DOCS.plainhub_agent_check.description,
+    {},
+    async () => {
+        const deps = localDeps('mcp');
+        return { content: [{ type: 'text', text: doctorText(await runDoctor(deps), { again: deps.again }) }] };
+    }
 );
 
 const transport = new StdioServerTransport();

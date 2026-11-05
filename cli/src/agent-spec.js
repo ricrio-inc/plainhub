@@ -74,6 +74,20 @@ export const GH_OPS = { create_repo: 'gh repo create', create_issue: 'gh issue c
 // 確認のカードを出す操作（AUTO_AGENT_RISKS）は、本人が読んで押すまで待つ → 画面の答えを待つ時間は答えの時間切れと同じ（ACTION_TIMEOUT_MS は見た目の操作だけ）
 export const CARD_ACTION_TIMEOUT_MS = ASK_TIMEOUT_MS;
 export const SESSION_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+// 中継役の版（U1b）: 中継役は hello・pair・郵便受けの agent.json・答えの done に、起動した時に読んだ自分の版（cli/package.json の version）を
+//   agentVersion で付け、動いている間にディスクの package.json の版が変わったら（npm i -g plainhub で新しい版を入れたが起動し直していない）
+//   その版も installedVersion で付ける。AI パネルは、installedVersion が agentVersion と違う時と、agentVersion が MIN_AGENT_VERSION より古い時に
+//   「起動し直して」を出す（版を言わない前の中継役には「版が分からない」とだけ）。AGENT_VERSION: 受け取る版の形（数字3つだけ・-beta などは受けない・先頭の 0 も受けない＝01.7.0 と 1.7.0 を別の版と見ない・gen-453 G3）
+//   MIN_AGENT_VERSION: このページが要る中継役の版（1か所・1.7.0＝答えの done に作業フォルダを付ける版＝U1）。版の比べ方は versionOlder の1か所
+export const AGENT_VERSION = /^(?:0|[1-9]\d{0,5})(?:\.(?:0|[1-9]\d{0,5})){2}$/;
+export const MIN_AGENT_VERSION = '1.7.0';
+// a が b より古いか（semver の major・minor・patch を数で比べる）。どちらかが AGENT_VERSION の形でなければ false（推し量らない）
+export const versionOlder = (a, b) => {
+    if (!AGENT_VERSION.test(a ?? '') || !AGENT_VERSION.test(b ?? '')) return false;
+    const x = a.split('.').map(Number), y = b.split('.').map(Number);
+    for (let i = 0; i < 3; i++) if (x[i] !== y[i]) return x[i] < y[i];
+    return false;
+};
 // 「PC で続ける」（U1）: 中継役は答えの done に作業フォルダ（cwd・絶対パス）を付け、AI パネルが `cd <cwd> && claude --resume <会話の番号>` をコピーさせる。
 //   付けてよい・出してよいフォルダはこの形だけ（中継役もブラウザも同じ式）: / か C:\ で始まり、使ってよい文字は決めたものだけ＝文字・数字・
 //   空白・. _ + - / \ : ( )（禁じる文字を並べる形にしない: PowerShell は飾りの引用符 “ ” „ も " と読む＝gen-437 G3 高。見えない文字・

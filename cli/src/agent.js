@@ -76,10 +76,10 @@ export function memoryTokenStore() {
 //   actions: 質問に添えた画面の見た目の操作の一覧を Claude Code に渡し、呼ばれたら action の出来事にして /action の答えを返す（AX1）
 const TAKES = Object.freeze({ images: true, queue: true, watch: true, actions: true });
 
-// opts: cwd（読ませるフォルダ）・origins（受け付けるサイト）・runner（mode は runner.mode＝claudeRunner の mode）・tokens（組の鍵の置き場）・log・code（最初の合言葉）・timeoutMs・maxAnswer（テスト用・既定は agent-spec.js）
-export function createAgentServer({ cwd = process.cwd(), origins = DEFAULT_ORIGINS, runner, tokens = memoryTokenStore(), log = () => {}, code = newPairingCode(), agentName = 'Claude Code', timeoutMs, maxAnswer, userSettings, actionTimeoutMs, cardActionTimeoutMs } = {}) {
+// opts: cwd（読ませるフォルダ）・origins（受け付けるサイト）・runner（mode は runner.mode＝claudeRunner の mode）・tokens（組の鍵の置き場）・log・code（最初の合言葉）・timeoutMs・maxAnswer（テスト用・既定は agent-spec.js）・packageFile（版を読む package.json・テスト用・U1b）
+export function createAgentServer({ cwd = process.cwd(), origins = DEFAULT_ORIGINS, runner, tokens = memoryTokenStore(), log = () => {}, code = newPairingCode(), agentName = 'Claude Code', timeoutMs, maxAnswer, userSettings, actionTimeoutMs, cardActionTimeoutMs, packageFile } = {}) {
     const allowed = new Set(origins);
-    const core = createAgentCore({ runner, timeoutMs, maxAnswer, userSettings, takes: TAKES, actionTimeoutMs, cardActionTimeoutMs });
+    const core = createAgentCore({ runner, timeoutMs, maxAnswer, userSettings, takes: TAKES, actionTimeoutMs, cardActionTimeoutMs, packageFile });
     let pairCode = code;
     let failures = 0;
     let port = 0;

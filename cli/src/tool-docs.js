@@ -45,6 +45,7 @@ export const TOOL_SUMMARY = {
     plainhub_ledger_thread:    { en: 'Read a work thread in order', ja: '作業のスレッドを順に読む' },
     plainhub_ledger_tasks:     { en: 'List tasks in the ledger', ja: '台帳の課題の一覧' },
     plainhub_ledger_read:      { en: 'Read one file of the ledger', ja: '台帳のファイルを1つ読む' },
+    plainhub_agent_check:      { en: 'Check this PC before you start Your agent (changes nothing)', ja: 'Your agent を始める前にこの PC を確かめる（何も変えない）' },
 };
 
 export function toolDocs(env = process.env) {
@@ -148,6 +149,10 @@ export function toolDocs(env = process.env) {
             args: {
                 path: `Path relative to .agents, e.g. ${EXAMPLE.message}`,
             },
+        },
+        plainhub_agent_check: {
+            description: 'Check this PC before the person starts "Your agent" (plainhub agent): Node.js, Claude Code and its version, the plainhub command, free ports and an agent already running, paired browsers, and whether a GitHub token for the phone is saved. It changes nothing: it starts nothing except claude --version, never reads a token\'s value, and does not start the agent. Each problem comes with one line on how to fix it; when all is ready, the last line is the command the person runs in their own terminal. Use it first when the user wants to set up Your agent or ask Claude Code from their phone, and again after fixing something. Example: {}',
+            args: {},
         },
     };
 }

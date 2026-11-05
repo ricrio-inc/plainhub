@@ -3,12 +3,16 @@
 //   何も変えない（書かない・起動しない・鍵を見せない）。Claude Code のログインは claude を起こさずには確かめられない → 版まで（ログインは人に案内する）
 //   足りない所があれば、それぞれ直し方を1行で出し、exit 1（AI が読んで次の一手を決められる・人が読んでも分かる）
 //   鍵・トークン・--cockpit・起動は人がする（AGENT_SETUP.md）→ 直し方の文は、AI に任せない所を「yourself」と書く
+//   プラグインの MCP の道具 plainhub_agent_check（gen-470・GOAL YA3）も同じ runDoctor を呼ぶ（写さない）。違いは localDeps の via だけ
 import http from 'http';
 import { homedir } from 'os';
 import { resolve, join } from 'path';
+import { statSync } from 'fs';
 import { spawnSync } from 'child_process';
 import { AGENT_PORTS } from './agent-spec.js';
 import { resolveCommand, childEnv } from './agent-core.js';
+import { fileTokenStore } from './agent.js';
+import { loadToken, loadGhToken, TOKEN_FILE } from './core.js';
 
 const MIN_NODE_MAJOR = 18;   // cli/package.json の engines と同じ（試験 cli-doctor が突き合わせる）
 const NODE_DOWNLOAD = 'https://nodejs.org/en/download';
@@ -18,7 +22,9 @@ const MAX_HELLO = 4096;   // plainhub agent の hello はこれより十分小�
 const VERSION_MS = 15000;
 
 // 相手（番号の先のプログラム・claude の出力）が返した文は、画面に出す前に1行・短く・制御文字なしに
-const plain = (s, max = 80) => String(s ?? '').replace(/[\u0000-\u001f\u007f-\u009f\u200b-\u200f\u202a-\u202e\u2066-\u2069]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max);
+//   目に見えない文字（書式の文字 Cf＝幅の無い文字・向きの文字・タグ文字 U+E0000〜・異体字の選び U+FE00〜・U+E0100〜）も消す。
+//   MCP の道具（plainhub_agent_check）では、この文がそのまま AI に渡る＝人に見えない指示を混ぜさせない（gen-470 G3 低-1）
+const plain = (s, max = 80) => String(s ?? '').replace(/[\p{Cc}\p{Cf}\u2028\u2029\u{FE00}-\u{FE0F}\u{E0000}-\u{E01EF}]/gu, ' ').replace(/\s+/g, ' ').trim().slice(0, max);
 
 // 待ち受けの番号の1つを見る: 'free'（空き）・{ agent: <フォルダ> }（plainhub agent が動いている）・'other'（ほかのプログラム）
 //   hello は Origin と Host を見る（agent.js）ので、本番のサイトから来た形で聞く。中身は読むだけ（組にならない）
@@ -63,7 +69,32 @@ function claudeVersion(exe, { cwd, pathCwd = cwd, env = process.env, platform = 
     return { version: plain(String(r.stdout).split('\n')[0], 60) };
 }
 
-// 全部の確かめ。deps は試験で差し替える（ふだんはこの PC の本物）
+// plainhub の入れたコマンド（npm i -g plainhub）を PATH から探す。node_modules/.bin の plainhub は数えない
+//   ＝npx が取ってきた写し（プラグインの MCP はこれで動く）やリポの写しは、本人が新しいターミナルで打つ plainhub ではない
+function findInstalledPlainhub(cwd, { env = process.env, platform = process.platform } = {}) {
+    const sepPath = platform === 'win32' ? ';' : ':';
+    const notBin = (v) => String(v ?? '').split(sepPath).filter((d) => !/[\\/]node_modules[\\/]\.bin[\\/]?$/i.test(d)).join(sepPath);
+    const only = Object.fromEntries(Object.entries(env).map(([k, v]) => [k, k.toUpperCase() === 'PATH' ? notBin(v) : v]));
+    return resolveCommand('plainhub', { cwd, env: only, platform });
+}
+
+// この PC の本物の確かめ方（plainhub doctor と MCP の plainhub_agent_check の1か所）
+//   via 'mcp'（プラグインの道具）は鍵を読まない: 保存した鍵はファイルがあるかだけ・gh の鍵は聞かない（プラグインの README の約束）。
+//   plainhub のコマンドがあるかも見る（CLI の doctor は plainhub そのもので動く＝見るまでもない）・直し方は道具の呼び直しで
+export function localDeps(via = 'cli') {
+    const common = { pairedCount: () => fileTokenStore().count() };
+    if (via !== 'mcp') return { ...common, savedToken: loadToken, ghToken: () => loadGhToken() };
+    return {
+        ...common,
+        savedToken: async () => { try { const st = statSync(TOKEN_FILE); return st.isFile() && st.size > 0; } catch { return false; } },
+        ghToken: null,
+        findPlainhub: (cwd) => findInstalledPlainhub(cwd),
+        again: 'call plainhub_agent_check again',
+    };
+}
+
+// 全部の確かめ。deps は試験で差し替える（ふだんはこの PC の本物＝localDeps）
+//   ghToken: null は「gh を聞かない」（知らせの文が変わるだけ・判定は同じ）。findPlainhub があれば plainhub のコマンドも見る
 //   返す: [{ id, ok: true | false | null（知らせだけ・失敗に数えない）, text, fix? }]
 export async function runDoctor({
     cwd = process.cwd(), env = process.env, platform = process.platform, nodeVersion = process.versions.node, home = homedir(),
@@ -74,6 +105,7 @@ export async function runDoctor({
     findClaudeForProject = () => resolveCommand('claude', { cwd: projectCwd, env, platform }),
     spawn = spawnSync, version = (exe, pathCwd) => claudeVersion(exe, { cwd, pathCwd, env, platform, spawn }), pairedCount = () => 0,
     savedToken = async () => null, ghToken = async () => null, mailbox, checkMailbox,
+    findPlainhub, again = 'run plainhub doctor again',
 } = {}) {
     const checks = [];
     const major = Number(String(nodeVersion).split('.')[0]);
@@ -86,12 +118,19 @@ export async function runDoctor({
     const exe = findClaude() || (atHome ? findClaudeForProject() : null);
     if (!exe) {
         checks.push({ id: 'claude', ok: false, text: 'Claude Code (claude) was not found',
-            fix: `Install Claude Code (${CLAUDE_CODE_SETUP}), check that claude runs in this terminal, then run plainhub doctor again.` });
+            fix: `Install Claude Code (${CLAUDE_CODE_SETUP}), check that claude runs in this terminal, then ${again}.` });
     } else {
         const v = version(exe, atHome ? projectCwd : cwd);
         checks.push(v.error
-            ? { id: 'claude', ok: false, text: `Claude Code was found, but ${v.error}`, fix: 'Update Claude Code (claude update), then run plainhub doctor again.' }
+            ? { id: 'claude', ok: false, text: `Claude Code was found, but ${v.error}`, fix: `Update Claude Code (claude update), then ${again}.` }
             : { id: 'claude', ok: true, text: `Claude Code ${v.version || '(version unknown)'} — sign-in isn't checked here: if you haven't, run claude once yourself and sign in` });
+    }
+    if (findPlainhub) {
+        const cmd = findPlainhub(atHome ? projectCwd : cwd);
+        checks.push(cmd
+            ? { id: 'cli', ok: true, text: `plainhub command: ${plain(cmd, 200)}` }
+            : { id: 'cli', ok: false, text: 'The plainhub command was not found (plainhub agent runs in your own terminal)',
+                fix: `Install it with npm i -g plainhub (no sudo), then ${again}. If it is still not found, restart Claude Code (it keeps the PATH it started with).` });
     }
     checks.push(atHome
         ? { id: 'folder', ok: null, text: `This folder is your home folder (${plain(cwd, 200)})`, fix: 'Start plainhub agent in the folder you want to ask about (cd into it first), not in your home folder itself.' }
@@ -111,8 +150,12 @@ export async function runDoctor({
 
     // 郵便受け（スマホから）の鍵: あるかだけ（値は見せない）。--mailbox を付けた時だけ、そのリポに届くかを GitHub に聞く
     const saved = !!(await savedToken());
-    const gh = saved ? false : !!(await ghToken());
-    if (mailbox === undefined) {
+    const gh = saved || !ghToken ? false : !!(await ghToken());
+    if (mailbox === undefined && !ghToken) {
+        checks.push(saved
+            ? { id: 'token', ok: null, text: 'GitHub token for your phone: saved by plainhub auth' }
+            : { id: 'token', ok: null, text: 'GitHub token for your phone: not saved by plainhub auth — only needed to ask from your phone', fix: 'To use your phone, run plainhub auth yourself (it asks for a token; an AI should not handle it).' });
+    } else if (mailbox === undefined) {
         checks.push(saved || gh
             ? { id: 'token', ok: null, text: `GitHub token for your phone: ${saved ? 'saved by plainhub auth' : 'from the gh CLI'} (add --mailbox <owner/repo> to check the repository)` }
             : { id: 'token', ok: null, text: 'GitHub token for your phone: none — only needed to ask from your phone', fix: 'To use your phone, run plainhub auth yourself (it asks for a token; an AI should not handle it).' });
@@ -131,7 +174,8 @@ export async function runDoctor({
 const MARK = { true: '[ok]  ', false: '[FIX] ', null: '[info]' };
 
 // 端末に出す形（ASCII の印・Windows の端末でも崩れない）。最後の行で、次の一手か、直す数を言う
-export function doctorText(checks, { mailbox } = {}) {
+//   again（MCP の道具）: 直す所がある時の最後の行も次の1手に（直してから道具を呼び直す・gen-470 G2 低-2）。CLI の文は今のまま
+export function doctorText(checks, { mailbox, again } = {}) {
     const lines = ['PlainHub doctor — checks this PC for "Your agent" (it changes nothing)'];
     for (const c of checks) {
         lines.push(`  ${MARK[c.ok]} ${c.text}`);
@@ -139,7 +183,7 @@ export function doctorText(checks, { mailbox } = {}) {
     }
     const bad = checks.filter(c => c.ok === false).length;
     lines.push('', bad
-        ? `${bad} problem${bad > 1 ? 's' : ''} to fix (marked [FIX]).`
+        ? `${bad} problem${bad > 1 ? 's' : ''} to fix (marked [FIX]).${again ? ` Follow the Fix lines, then ${again}.` : ''}`
         : `Ready. Next, in your own terminal: cd into the folder you want to ask about and run plainhub agent${mailbox ? ` --mailbox ${mailbox}` : ''} — keep the terminal open.`);
     return lines.join('\n');
 }

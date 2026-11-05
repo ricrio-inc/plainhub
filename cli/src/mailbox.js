@@ -259,15 +259,15 @@ export function parseSends(q, now = Date.now()) {
 
 // opts: gh（githubClient）・repo・runner（agent.js の claudeRunner と同じ形）・log・agentName・folder・login
 //   timing: { pollMs, writeMs, heartbeatMs, recheckMs, slowMs, jumpMs, beatFloorMs }（テスト用）・now（時刻）・mono（スリープの間は進まない時計）
-//   timeoutMs・maxAnswer（テスト用・既定は agent-spec.js）
+//   timeoutMs・maxAnswer（テスト用・既定は agent-spec.js）・packageFile（版を読む package.json・テスト用・U1b）
 export function createMailbox({ gh, repo, runner, log = () => {}, agentName = 'Claude Code', folder = '', login = '', now = Date.now, mono = () => performance.now(),
     timeoutMs, maxAnswer, pollMs = POLL_MS, writeMs = WRITE_MS, keepaliveMs = KEEPALIVE_MS, writeBudget = WRITE_BUDGET_PER_HOUR, heartbeatMs = HEARTBEAT_MS, recheckMs = RECHECK_MS,
-    slowMs = SLOW_CHECK_MS, jumpMs = CLOCK_JUMP_MS, beatFloorMs = BEAT_FLOOR_MS, userSettings, actionTimeoutMs, cardActionTimeoutMs } = {}) {
+    slowMs = SLOW_CHECK_MS, jumpMs = CLOCK_JUMP_MS, beatFloorMs = BEAT_FLOOR_MS, userSettings, actionTimeoutMs, cardActionTimeoutMs, packageFile } = {}) {
     const files = mailboxFiles(gh, repo);
     // 郵便受けの会話は郵便受けで始めたものだけ続けられる（PC とは別の芯）。受け取るもの: 連投（QM4・agent.json と答えの done で queue: true を伝える）
     //   画面の見た目の操作（AX1・agent.json と答えの done で actions: true を伝える）: 連投の形の送信だけ（答えは question.json の results）
     //   貼った画像（IP3・images: true）: 送信には置き場所だけ。中身は受け取った時に readImages で読み、PC と同じ images で Claude Code に渡す
-    const core = createAgentCore({ runner, timeoutMs, maxAnswer, userSettings, takes: { images: true, queue: true, actions: true }, actionTimeoutMs, cardActionTimeoutMs });
+    const core = createAgentCore({ runner, timeoutMs, maxAnswer, userSettings, takes: { images: true, queue: true, actions: true }, actionTimeoutMs, cardActionTimeoutMs, packageFile });
     let questionEtag = null;
     let lastId = null;            // 答えた（答えている）質問（前の形）
     let pending = null;           // まだ答えていない質問（前の形）

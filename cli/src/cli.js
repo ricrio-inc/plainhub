@@ -9,7 +9,7 @@ import { openOptionsUsage, readOpenOption } from './cli-options.js';
 import { openSync, readSync, closeSync, fstatSync, constants as fsConstants } from 'fs';
 import { createAgentServer, claudeRunner, stopAllClaude, fileTokenStore, isAllowedExtraOrigin, AGENT_PORTS, DEFAULT_ORIGINS, showPairingCode, userDefaultPermissionMode } from './agent.js';
 import { githubClient, checkMailboxRepo, isMailboxRepo, pickMailboxToken, createMailbox, MAILBOX_BRANCH } from './mailbox.js';
-import { runDoctor, doctorText } from './doctor.js';
+import { runDoctor, doctorText, localDeps } from './doctor.js';
 import { postMessage, createDecision, checkLedger, roomLanguage, languageNote, LedgerError, LIMITS, safeText, listDecisions, listTasks, readThread, readEntry, decisionsText, tasksText, threadText, entryText, initLedger, initText, openLinkText, syncLedger, syncText, formatLedger, formatText } from './ledger.js';
 
 // open・browse・diff の共通: 行き先（PLAINHUB_APP_URL）が許されなければ開かずに exit 1
@@ -358,9 +358,7 @@ async function runDoctorCommand(rest) {
     const fail = (m) => Object.assign(new Error(m), { agentError: true });
     if (values.mailbox !== undefined && !isMailboxRepo(values.mailbox)) throw fail(`--mailbox needs a repository as owner/name (got ${values.mailbox.slice(0, 100)})`);
     const checks = await runDoctor({
-        pairedCount: () => fileTokenStore().count(),
-        savedToken: loadToken,
-        ghToken: () => loadGhToken(),
+        ...localDeps('cli'),
         mailbox: values.mailbox,
         checkMailbox: async repo => (await openMailboxRepo(repo)).login,
     });
