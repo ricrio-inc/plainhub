@@ -52,15 +52,12 @@ Bounce ideas off an AI that knows your repo, then save the result as a Markdown 
 
 ---
 
-## Search Documents with Natural Language
+## Ask AI: answers with sources
 
-Cross-repository search powered by AI enables natural language queries (Coming Soon).
+Type a question in the search box and choose **Ask AI**. PlainHub turns the question into search words, searches this repository or all the repositories you added, and the AI answers from the matching lines, with sources (repository › file, and the line when it is known). The sources come from the files the search actually found, not from paths the AI writes.
 
-```
-"Which is the latest version that covers this topic?"
-"Where was that security policy document?"
-"Summarize the action items from last month's meeting notes"
-```
+- **With Your agent** (your own Claude Code on your PC): no AI key needed.
+- **With your own Anthropic API key**: the cost of each answer is shown.
 
 ---
 
@@ -98,12 +95,11 @@ The AI panel features push-to-talk voice input and AI response read-aloud (TTS).
 - Supported on Chrome/Edge/Safari
 - Mobile (touch) support
 
-**Phase 2 (Coming Soon)**: High-Accuracy Speech Recognition
-- Whisper API (BYOK) support — precise recognition of technical terms
+**Phase 2 (Shipped)**: Voice Chat
+- Press the wave button next to the box: the panel listens without a button press, sends what you said when you stop talking, reads the answer aloud, and listens again
+- An approval card still needs a tap on the screen — a spoken "yes" never approves
 
-**Phase 3 (Coming Soon)**: Conversation Mode (Full Hands-Free)
-- Continuous conversation mode (auto-listens for next voice input after AI responds, no button press needed)
-- Wake-word support for fully hands-free interaction while driving, cooking, etc.
+Not scheduled yet: Whisper API (BYOK) for technical terms, and a wake word to start without touching the screen.
 
 ```
 Speak: "Summarize the meeting notes and create Issues for each TODO"
