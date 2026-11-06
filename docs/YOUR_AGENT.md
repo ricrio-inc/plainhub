@@ -57,7 +57,7 @@ PlainHub agent — Claude Code, read-only
   Sites:   https://app.plainhub.dev
 
   Pairing code: 123456
-  In PlainHub: Settings → AI → "Connect your own agent", then enter the code.
+  In PlainHub: "Ask AI" (at the top) → "Connect your own agent", then enter the code.
 
 Press Ctrl+C to stop.
 ```
@@ -68,7 +68,7 @@ Leave this terminal open. The agent answers only while it is running.
 
 ### 3. Connect PlainHub
 
-1. In PlainHub on the same PC, open “Settings” (⚙️) and, under “AI”, click “Connect your own agent”
+1. In PlainHub on the same PC, click “Ask AI” at the top, then “Connect your own agent” (the same button is also in “Settings” (⚙️), under “AI”)
 2. Enter the pairing code and click “Connect”
 3. If your browser asks to let the site access apps on your device or local network, choose **Allow**
 
@@ -96,7 +96,7 @@ First, on GitHub, make a **private** repository that only you can write to, with
    plainhub agent --mailbox you/private-repo
    ```
 
-4. On your phone, sign in to PlainHub with the same GitHub account, then: “Settings” → “AI” → “Connect your own agent” → “From your phone”, enter `you/private-repo`, and tap “Connect”. If you let PlainHub use only some of your repositories, let it use the mailbox repository too: tap “Add it on GitHub” under the message on that screen (or open the repository list and choose “＋ Add / Remove Repositories”), select the repository, save, and tap “Connect” again
+4. On your phone, sign in to PlainHub with the same GitHub account, then: “AI” (at the top) → “Connect your own agent” → “From your phone”, enter `you/private-repo`, and tap “Connect”. If you let PlainHub use only some of your repositories, let it use the mailbox repository too: tap “Add it on GitHub” under the message on that screen (or open the repository list and choose “＋ Add / Remove Repositories”), select the repository, save, and tap “Connect” again
 
 Questions (with the open file) and answers are saved in the `plainhub-chat` branch of that repository. Keep your PC on and awake while you ask from your phone.
 

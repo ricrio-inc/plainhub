@@ -58,7 +58,7 @@ cd <folder>
 plainhub agent
 ```
 
-Then, in PlainHub: Settings → AI → "Connect your own agent" → "On this PC", and enter the 6-digit code the terminal shows. The terminal must stay open.
+Then, in PlainHub: "Ask AI" (at the top) → "Connect your own agent" → "On this PC", and enter the 6-digit code the terminal shows. The same button is also in Settings → AI. The terminal must stay open.
 
 From their phone: they need a private GitHub repository that only they can write to. They run `plainhub auth` themselves once (a token for only that repository, with "Contents: Read and write"). Then, in their own terminal:
 
@@ -67,7 +67,7 @@ cd <folder>
 plainhub agent --mailbox <owner/repo>
 ```
 
-Then, on their phone: PlainHub → Settings → AI → "Connect your own agent" → "From your phone", enter the same `<owner/repo>`, and tap "Connect". After they run `plainhub auth`, you can check the repository with `plainhub doctor --mailbox <owner/repo>`.
+Then, on their phone: PlainHub → "AI" (at the top) → "Connect your own agent" → "From your phone", enter the same `<owner/repo>`, and tap "Connect". After they run `plainhub auth`, you can check the repository with `plainhub doctor --mailbox <owner/repo>`.
 
 ## 6. Check that it connected
 

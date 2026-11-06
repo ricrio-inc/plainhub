@@ -57,7 +57,7 @@ PlainHub agent — Claude Code, read-only
   Sites:   https://app.plainhub.dev
 
   Pairing code: 123456
-  In PlainHub: Settings → AI → "Connect your own agent", then enter the code.
+  In PlainHub: "Ask AI" (at the top) → "Connect your own agent", then enter the code.
 
 Press Ctrl+C to stop.
 ```
@@ -68,7 +68,7 @@ Press Ctrl+C to stop.
 
 ### 3. PlainHub とつなぐ
 
-1. 同じ PC の PlainHub で「Settings」（⚙️）を開き、「AI」の「Connect your own agent」を押します
+1. 同じ PC の PlainHub で、上の「Ask AI」を押し、「Connect your own agent」を押します（「Settings」（⚙️）の「AI」にも同じボタンがあります）
 2. 合言葉を入れて「Connect」を押します
 3. ブラウザが「このデバイスのアプリやローカルネットワークへのアクセス」を聞いてきたら、**許可**を選びます
 
@@ -96,7 +96,7 @@ Claude Code は `plainhub doctor` で足りないものを確かめ、必要な�
    plainhub agent --mailbox you/private-repo
    ```
 
-4. スマホで、同じ GitHub のアカウントで PlainHub にサインインし、「Settings」→「AI」→「Connect your own agent」→「From your phone」と進み、`you/private-repo` を入れて「Connect」を押します。PlainHub に一部のリポジトリだけを許可している場合は、郵便受けのリポジトリも許可してください。その画面のメッセージの下にある「Add it on GitHub」を押し（またはリポジトリの一覧で「＋ Add / Remove Repositories」を選び）、リポジトリを選んで保存し、もう一度「Connect」を押します
+4. スマホで、同じ GitHub のアカウントで PlainHub にサインインし、上の「AI」→「Connect your own agent」→「From your phone」と進み、`you/private-repo` を入れて「Connect」を押します。PlainHub に一部のリポジトリだけを許可している場合は、郵便受けのリポジトリも許可してください。その画面のメッセージの下にある「Add it on GitHub」を押し（またはリポジトリの一覧で「＋ Add / Remove Repositories」を選び）、リポジトリを選んで保存し、もう一度「Connect」を押します
 
 質問（開いているファイルも一緒に）と答えは、そのリポジトリの `plainhub-chat` ブランチに保存されます。スマホから聞いている間は、PC の電源を入れたまま、スリープしない状態にしておいてください。
 
