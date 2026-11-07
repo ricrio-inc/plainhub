@@ -8,6 +8,10 @@
     "url": "https://plainhub.dev"
   },
   "homepage": "https://plainhub.dev",
+  "repository": "https://github.com/ricrio-inc/plainhub",
+  "supportUrl": "https://github.com/ricrio-inc/plainhub/issues/new/choose",
+  "privacyPolicyUrl": "https://plainhub.dev/privacy",
+  "documentationUrl": "https://github.com/ricrio-inc/plainhub/blob/main/claude-plugin/README.md",
   "license": "MIT",
   "keywords": [
     "ledger",
