@@ -1,11 +1,15 @@
 # PlainHub
 
+[![Try PlainHub](https://img.shields.io/badge/Try%20PlainHub-app.plainhub.dev-blue?style=for-the-badge)](https://app.plainhub.dev)
+[![npm version](https://img.shields.io/npm/v/plainhub)](https://www.npmjs.com/package/plainhub)
+
+**This repository is the PlainHub CLI and MCP server (open source, MIT license)**
+
+The PlainHub app itself is a hosted service. It is not open source and is not in this repository.
+
 **A GitHub editor, wired to Claude Code**
 
 Open, write and save Markdown and plain-text files in your own GitHub repos from a browser or phone; every save is a commit. Connect the Claude Code on your PC, talk to it by voice, and approve its proposals from anywhere. Your files stay in your GitHub.
-
-[![Try PlainHub](https://img.shields.io/badge/Try%20PlainHub-app.plainhub.dev-blue?style=for-the-badge)](https://app.plainhub.dev)
-[![npm version](https://img.shields.io/npm/v/plainhub)](https://www.npmjs.com/package/plainhub)
 
 [Website](https://plainhub.dev) · ▶ [30-second intro (YouTube)](https://youtu.be/2ThRzBnGxoE) · [Documentation](#documentation) · [日本語ドキュメント](docs/ja/README.md) · [Why I built it](https://plainhub.dev/guides/phone-notes-github)
 

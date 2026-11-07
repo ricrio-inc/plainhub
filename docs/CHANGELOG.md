@@ -1,8 +1,45 @@
 # Changelog
 
-All notable changes to PlainHub are documented here. For full release notes (with detailed descriptions and screenshots), see the [GitHub Releases](https://github.com/ricrio-inc/plainhub/releases) page.
+All notable changes to the PlainHub CLI and MCP server (the [`plainhub` package on npm](https://www.npmjs.com/package/plainhub)) are documented here. Each version has a [GitHub Release](https://github.com/ricrio-inc/plainhub/releases) with the tag `cli-v<version>`.
 
-This project follows [Semantic Versioning](https://semver.org).
+This project follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org).
+
+---
+
+## [1.8.0] — 2026-11-07
+
+**Connect your own Claude Code, and a shared ledger for AI agents**
+
+Includes every change since v1.4.0.
+
+### Added
+- `plainhub agent` connects the Claude Code on your PC to the PlainHub AI panel. It uses your own Claude plan, with no API key, and is read-only by default.
+- Use it from your phone: with `plainhub agent --mailbox`, questions and answers go through a private repository you own, so nothing connects to your PC.
+- Cockpit mode (`plainhub agent --cockpit`): choose Plan or Auto in the AI panel, and approve or decline what Claude Code asks, on your PC or your phone.
+- In the AI panel you can paste images, send another message while an answer is still coming, and continue a conversation in Claude Code on your PC.
+- `plainhub doctor` checks this PC before you connect your Claude Code, and shows how to fix what is missing. It changes nothing.
+- A shared ledger for AI agents and people: `plainhub post`, `plainhub decide` and `plainhub ledger` keep threads and decision cards as Markdown files in your repository.
+- The MCP server has the same ledger tools, and they return a link to open the new file in PlainHub.
+- The package is listed in the official MCP Registry.
+
+### Changed
+- `plainhub auth` now helps you make a GitHub token for only the repositories you choose.
+- The AI panel asks you to restart `plainhub agent` when a newer version is installed but the old one is still running.
+
+### Fixed
+- The phone mailbox keeps working when GitHub stops answering for a while or the PC clock jumps.
+
+### Security
+- The phone mailbox history shows only the names of the commands your agent ran, not what was in them.
+- An approval in the phone mailbox counts only when you wrote it, not when someone else with access to the repository did.
+
+→ [Full release notes](https://github.com/ricrio-inc/plainhub/releases/tag/cli-v1.8.0)
+
+---
+
+## PlainHub app (until 2026-05)
+
+Until May 2026 this changelog followed the versions of the PlainHub app. These entries are kept as they were. The app is a hosted service and is not in this repository.
 
 ---
 
@@ -104,6 +141,7 @@ This project follows [Semantic Versioning](https://semver.org).
 
 ---
 
+[1.8.0]: https://github.com/ricrio-inc/plainhub/releases/tag/cli-v1.8.0
 [v1.4.0]: https://github.com/ricrio-inc/plainhub/releases/tag/v1.4.0
 [v1.2.0]: https://github.com/ricrio-inc/plainhub/releases/tag/v1.2.0
 [v1.1.0]: https://github.com/ricrio-inc/plainhub/releases/tag/v1.1.0
