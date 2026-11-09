@@ -1,0 +1,82 @@
+# Tags each CLI version and publishes its GitHub Release.
+#   When cli/package.json changes on main, read its version. If the tag cli-v<version> does not exist yet,
+#   create the tag on this commit and a Release marked Latest. The release notes are the section of that
+#   version in docs/CHANGELOG.md (the one place they are written). No section, no release: the job fails.
+#   If the tag already exists, nothing happens (a version is released once).
+name: CLI release
+
+on:
+  push:
+    branches: [main]
+    paths: [cli/package.json]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: cli-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    if: github.repository == 'ricrio-inc/plainhub' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Tag and release the CLI version
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if [ ! -f cli/package.json ]; then
+            echo "::notice::cli/package.json is not here, so there is no CLI version to release"
+            exit 0
+          fi
+          version=$(node -p 'require("./cli/package.json").version')
+          if ! [[ "$version" =~ ^(0|[1-9][0-9]{0,5})\.(0|[1-9][0-9]{0,5})\.(0|[1-9][0-9]{0,5})$ ]]; then
+            echo "::error file=cli/package.json::the version must look like 1.8.0"
+            exit 1
+          fi
+          tag="cli-v$version"
+          set +e
+          git ls-remote --exit-code --tags origin "refs/tags/$tag" >/dev/null
+          found=$?
+          set -e
+          if [ "$found" -eq 0 ]; then
+            echo "::notice::$tag already exists, nothing to do"
+            exit 0
+          fi
+          if [ "$found" -ne 2 ]; then
+            echo "::error::could not read the tags of this repository (git ls-remote exit $found)"
+            exit 1
+          fi
+          notes="$RUNNER_TEMP/release-notes.md"
+          title=$(VERSION="$version" NOTES="$notes" node -e '
+            const fs = require("fs");
+            const { VERSION, NOTES } = process.env;
+            const fail = (m) => { console.error(`::error file=docs/CHANGELOG.md::${m}`); process.exit(1); };
+            if (!fs.existsSync("docs/CHANGELOG.md")) fail("docs/CHANGELOG.md is missing");
+            const lines = fs.readFileSync("docs/CHANGELOG.md", "utf8").split("\n");
+            const start = lines.findIndex((l) => l.startsWith(`## [${VERSION}] — `));
+            if (start < 0) fail(`there is no section "## [${VERSION}] — <date>" for this version`);
+            let end = lines.findIndex((l, i) => i > start && (l === "---" || l.startsWith("## ")));
+            if (end < 0) end = lines.length;
+            const section = lines.slice(start + 1, end);
+            const t = section.findIndex((l) => l.trim());
+            const title = t < 0 ? "" : (section[t].match(/^\*\*(.+)\*\*$/) || [])[1];
+            if (!title) fail(`the section of ${VERSION} must start with its title in bold (**...**)`);
+            if (/[\x00-\x1f\x7f-\x9f\u200b-\u200f\u2028-\u202e\u2066-\u2069`"]/.test(title)) fail(`the title of ${VERSION} has a control character, \` or "`);
+            const body = section.slice(t + 1).filter((l) => !l.startsWith("→ [Full release notes]("));
+            const text = body.join("\n").trim();
+            if (!text) fail(`the section of ${VERSION} has no notes`);
+            fs.writeFileSync(NOTES, `${text}\n`);
+            process.stdout.write(title);
+          ')
+          gh release create "$tag" --target "$GITHUB_SHA" --latest \
+            --title "v$version — $title" \
+            --notes-file "$notes"
+          echo "::notice::created $tag and its Release"
