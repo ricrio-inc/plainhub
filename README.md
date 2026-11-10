@@ -85,7 +85,7 @@ Open a note on your phone, fix a line, and it is saved — as a commit in your o
 - **File history** — View past versions with diff
 - **Sync & conflict resolution** — Real-time sync with GitHub
 - **Image paste** — Paste images directly, auto-upload to repo
-- **Cross-repo search** — Search across all your repositories
+- **Cross-repo search** — [Search across multiple repositories at once](https://plainhub.dev/search): one search box looks through the file names and contents of the repositories you added
 
 ### Integration
 
