@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // PlainHub CLI - ブラウザ起動 + PAT認証管理
 
-import { openPlainHub, TargetError, openInBrowser, PARAMS, loadToken, saveToken, removeToken, loadGhToken, GITHUB_TOKEN_URL, TOKEN_STEPS, TOKEN_FORMATS, tokenNotice, tokenStatus, isValidTokenFormat, maskToken, LEDGER_ACCESS } from './core.js';
+import { openPlainHub, TargetError, openInBrowser, PARAMS, loadToken, saveToken, removeToken, loadGhToken, GITHUB_TOKEN_URL, TOKEN_STEPS, TOKEN_FORMATS, tokenNotice, tokenStatus, tokenSaveCheck, isValidTokenFormat, maskToken, LEDGER_ACCESS } from './core.js';
 import { createInterface } from 'readline';
 import { basename } from 'path';
 import { parseArgs } from 'util';
@@ -10,7 +10,7 @@ import { openSync, readSync, closeSync, fstatSync, constants as fsConstants } fr
 import { createAgentServer, claudeRunner, stopAllClaude, fileTokenStore, isAllowedExtraOrigin, AGENT_PORTS, DEFAULT_ORIGINS, showPairingCode, userDefaultPermissionMode } from './agent.js';
 import { githubClient, checkMailboxRepo, isMailboxRepo, pickMailboxToken, createMailbox, MAILBOX_BRANCH } from './mailbox.js';
 import { runDoctor, doctorText, localDeps } from './doctor.js';
-import { postMessage, createDecision, checkLedger, roomLanguage, languageNote, LedgerError, LIMITS, safeText, listDecisions, listTasks, readThread, readEntry, decisionsText, tasksText, threadText, entryText, initLedger, initText, openLinkText, syncLedger, syncText, formatLedger, formatText } from './ledger.js';
+import { postMessage, createDecision, checkLedger, roomLanguage, languageNote, LedgerError, LIMITS, safeText, listDecisions, listTasks, readThread, readEntry, decisionsText, tasksText, threadText, entryText, initLedger, initText, openLinkText, syncLedger, syncText, formatLedger, formatText, AGENT_DENIED_ROLES, agentDeniedRoleText } from './ledger.js';
 
 // open・browse・diff の共通: 行き先（PLAINHUB_APP_URL）が許されなければ開かずに exit 1
 async function openOrPrint(options, { noAuth, noOpen }) {
@@ -89,8 +89,10 @@ Examples:
   plainhub diff abc1234 -r owner/repo --path src/main.js
 
 Ledger (body from --body-file or standard input):
-  plainhub post --ledger <folder> --thread fix-login-timeout --role dev|reviewer|security|daily|owner|cockpit \\
+  plainhub post --ledger <folder> --thread fix-login-timeout --role dev|reviewer|security|daily|cockpit \\
     --verdict pass|fail|changes-requested|approved|info --summary "<max 120 chars, room language>" [--commit <sha>] [--body-file <file>]
+    (an AI agent cannot post as ${AGENT_DENIED_ROLES.join('|')}: a person approves in PlainHub, or types --role ${AGENT_DENIED_ROLES.join('|')} --as-owner
+     with --body-file at a terminal and confirms)
   plainhub decide --ledger <folder> --id fix-login-timeout-release --summary "<max 120 chars, room language>" [--ref <a,b,c>]... [--body-file <file>]
   plainhub ledger init <folder> [--language <BCP 47 tag, default en>]   (never overwrites existing files)
   plainhub ledger check <folder> [--paths <file>...]
@@ -219,10 +221,16 @@ if (command === 'auth') {
             console.error(`Invalid token format. ${TOKEN_FORMATS}`);
             process.exit(1);
         }
+        // 全部のリポに書ける鍵・GitHub が受け付けない鍵は保存しない（YA5）。--from-gh は gh に与えた権限のまま取り込む（一言だけ）
+        console.log('Checking with GitHub which repositories this token can write to...');
+        const { error, note } = await tokenSaveCheck(token);
+        if (error) {
+            console.error(error);
+            process.exit(1);
+        }
         await saveToken(token);
         console.log(`Token saved: ${maskToken(token)}`);
-        const notice = tokenNotice(token);
-        if (notice) console.log(notice);
+        if (note) console.log(note);
     }
 } else if (command === 'open') {
     const options = {};
@@ -421,13 +429,13 @@ async function runAgent(rest) {
   Sites:   ${origins.join(', ')}
 
   Pairing code: ${showPairingCode(code)}
-  In PlainHub: Settings → AI → "Connect your own agent", then enter the code.
+  In PlainHub: "Ask AI" (at the top) → "Connect your own agent", then enter the code.
 ${process.env.npm_command === 'exec' ? `
   Tip: next time, install once with \`npm i -g plainhub\` and run \`plainhub agent\` (npx can run a copy that a project folder brings with it).
 ` : ''}${mailbox ? `
   Mailbox: ${values.mailbox} (branch ${MAILBOX_BRANCH})  — this PC checks it every few seconds; nothing connects to this PC
   GitHub account: ${mailboxAccount}
-  On your phone: PlainHub → Settings → AI → "Connect your own agent" → "From your phone", then enter ${values.mailbox}
+  On your phone: PlainHub → "AI" (at the top) → "Connect your own agent" → "From your phone", then enter ${values.mailbox}
   Questions (with the open file) and answers are saved in that private repository.
 ` : ''}
 Press Ctrl+C to stop.`);
@@ -458,9 +466,18 @@ function runLedger(command, rest) {
     if (command === 'post') {
         const { values } = parseArgs({ args: rest, ...strict, options: {
             ledger: { type: 'string' }, thread: { type: 'string' }, role: { type: 'string' }, verdict: { type: 'string' },
-            summary: { type: 'string' }, commit: { type: 'string' }, 'body-file': { type: 'string' },
+            summary: { type: 'string' }, commit: { type: 'string' }, 'body-file': { type: 'string' }, 'as-owner': { type: 'boolean' },
         } });
-        const r = postMessage({ ...values, body: readBody(values['body-file']) });
+        const { 'as-owner': asOwner, ...fields } = values;
+        if (AGENT_DENIED_ROLES.includes(fields.role)) {
+            if (!asOwner) throw new LedgerError(agentDeniedRoleText(fields.role, 'the CLI'));
+        } else if (asOwner) {
+            throw new LedgerError(`--as-owner is only for --role ${AGENT_DENIED_ROLES.join('|')}; nothing was written`);
+        }
+        if (asOwner) personAtTerminal(fields['body-file']);
+        const body = readBody(fields['body-file']);
+        if (asOwner) confirmPerson(fields);
+        const r = postMessage({ ...fields, body });
         console.log(r.path);
         // 部屋の言葉と PlainHub で開くリンク（PG3）は標準エラーへ（標準出力は書いたパスだけ）
         console.error(languageNote(roomLanguage(values.ledger)));
@@ -538,6 +555,23 @@ function readLedger([sub, ledger, what, ...extra], { status, paths }) {
 }
 
 // 本文: --body-file（- は標準入力）か標準入力（端末からの起動で指定が無ければ空）。上限を超える分は読まない
+// 人が owner として書く時の確認（gen-519・LR1）: 端末（TTY）で役の名前を打った時だけ通す
+//   AI のシェル・パイプからは端末にならないので止まる。本文は --body-file から（標準入力は確認に使う）
+function personAtTerminal(file) {
+    if (!process.stdin.isTTY || !process.stderr.isTTY) throw new LedgerError('--as-owner needs a person at a terminal to confirm (decision cards can also be approved in PlainHub); nothing was written');
+    if (file === '-') throw new LedgerError('with --as-owner, give the body with --body-file <file> (the terminal is used to confirm); nothing was written');
+}
+function confirmPerson({ role, thread }) {
+    process.stderr.write(`Post to thread ${safeText(thread || '', 100)} as ${role}: this records a person's decision. Type "${role}" to confirm: `);
+    const buf = Buffer.alloc(100);
+    let n = 0;
+    for (;;) {
+        try { n = readSync(0, buf, 0, buf.length, null); break; }
+        catch (e) { if (e.code === 'EAGAIN') continue; if (e.code === 'EOF') break; throw e; }
+    }
+    if (buf.subarray(0, n).toString('utf8').trim() !== role) throw new LedgerError('not confirmed; nothing was written');
+}
+
 function readBody(file) {
     let fd;
     if (file != null && file !== '-') {

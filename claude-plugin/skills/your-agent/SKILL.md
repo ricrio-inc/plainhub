@@ -11,13 +11,13 @@ Be clear about what the agent can do, especially if the person asks about safety
 
 ## Check this PC first
 
-Call the `plainhub_agent_check` tool of this plugin first. It changes nothing and works before the `plainhub` command is installed: it checks Node.js, Claude Code, the `plainhub` command, the ports and an agent already running, and whether a GitHub token for the phone is saved (never its value). Each problem comes with one line on how to fix it; when all is ready, its last line is the command the person runs in their own terminal. Call it again after fixing something. If the tool is not available, use `plainhub doctor` as in the steps below.
+If the `plainhub` command is already installed, run `plainhub doctor` first. It changes nothing and sends nothing over the network: it checks Node.js, Claude Code, the ports and an agent already running, and whether a GitHub token for the phone is saved (it never shows the value). Each problem comes with one line on how to fix it. Run it again after fixing something. If `plainhub` is not found, go on: the steps below install it.
 
 ## Where the steps are
 
 The setup steps for an AI assistant are on one page, for the same `plainhub` version as this plugin:
 
-https://raw.githubusercontent.com/ricrio-inc/plainhub/cli-v1.8.0/docs/AGENT_SETUP.md
+https://raw.githubusercontent.com/ricrio-inc/plainhub/cli-v1.8.4/docs/AGENT_SETUP.md
 
 Read that page (only that page) and follow it from top to bottom. In short, it has you check Node.js with `node -v`, install with `npm i -g plainhub` if needed, check the PC with `plainhub doctor`, ask the person which folder to use, ask whether they want to ask on this PC or from their phone, and tell them the exact command to start the agent in their own terminal. Then they connect in PlainHub: on this PC, “Ask AI” at the top, then “Connect your own agent” (the “On this PC” tab); on a phone, “AI” at the top, then “Connect your own agent” → “From your phone”.
 

@@ -49,7 +49,7 @@ function mcpCopy() {
     fs.mkdirSync(path.join(sdk, 'server'), { recursive: true });
     fs.writeFileSync(path.join(sdk, 'package.json'), '{"name":"@modelcontextprotocol/sdk","type":"module"}');
     fs.writeFileSync(path.join(sdk, 'server', 'mcp.js'),
-        'export class McpServer { tool(name, _d, _s, fn) { (globalThis.__tools ||= {})[name] = fn; } async connect() {} }\n');
+        'export class McpServer { tool(name, _d, ...r) { (globalThis.__tools ||= {})[name] = r.at(-1); } async connect() {} }\n');
     fs.writeFileSync(path.join(sdk, 'server', 'stdio.js'), 'export class StdioServerTransport {}\n');
     const zod = path.join(dir, 'node_modules', 'zod');
     fs.mkdirSync(zod, { recursive: true });

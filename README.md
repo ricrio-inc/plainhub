@@ -115,6 +115,8 @@ plainhub open README.md -r owner/repo
 
 ### MCP Server (AI IDE)
 
+**CLI or MCP?** The CLI is for people and for AI agents that can run a shell; the MCP server lets AI tools without a shell call the same commands in a fixed form. The ledger commands of both run the same code (`cli/src/ledger.js`).
+
 ```bash
 npm install -g plainhub
 claude mcp add plainhub -- plainhub-mcp

@@ -1,8 +1,8 @@
 {
   "name": "plainhub",
   "displayName": "PlainHub",
-  "version": "1.8.0",
-  "description": "From your phone, ask your own Claude Code about your repo, read its reports as pages, and approve its proposals. Reports and decision cards stay in your Git repo as a shared ledger.",
+  "version": "1.8.4",
+  "description": "From your phone, ask your own Claude Code about your repo, read its reports as pages, and approve its proposals. Reports and decision cards stay in your Git repo as a shared ledger. Works with Claude Code and other MCP clients.",
   "author": {
     "name": "PlainHub",
     "url": "https://plainhub.dev"
@@ -19,7 +19,7 @@
     "handoff",
     "review",
     "decisions",
-    "mcp",
+    "cli",
     "git"
   ]
 }

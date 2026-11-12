@@ -111,6 +111,10 @@ If you use your own Anthropic API key, Anthropic API usage fees apply. If you co
 
 ## CLI / MCP Server
 
+### Should I use the CLI or the MCP server?
+
+The CLI is for people and for AI agents that can run a shell; the MCP server lets AI tools without a shell call the same commands in a fixed form. The ledger commands of both run the same code (`cli/src/ledger.js`).
+
 ### I can't install the CLI
 
 Node.js 18 or later is required. Check your version with `node --version`.

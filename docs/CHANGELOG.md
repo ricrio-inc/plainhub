@@ -6,6 +6,38 @@ This project follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) an
 
 ---
 
+## [1.8.4] — 2026-11-12
+
+**The MCP server does not start a ledger in a repository of your whole home folder**
+
+Includes every change since 1.8.2.
+
+### Changed
+- When no ledger folder is set and the MCP server starts in a Git repository that holds your whole home folder (such as dotfiles), it stops and says to start it in your project repository instead.
+- A project repository inside your home folder works as before, including a worktree whose Git data is kept in your home folder.
+- The npm package page says it works with Claude Code and other MCP clients.
+
+→ [Full release notes](https://github.com/ricrio-inc/plainhub/releases/tag/cli-v1.8.4)
+
+---
+
+## [1.8.2] — 2026-11-09
+
+**Safer tokens, and the MCP server works in the repository you start it in**
+
+### Changed
+- When no ledger folder is set, the MCP server uses the Git repository folder it was started in. It does not write to your home folder or outside a Git repository.
+- The MCP tools now say which ones only read, which ones write to the ledger, and which ones reach outside your computer (a browser, GitHub or your Git remote).
+- Messages from `plainhub agent` and the setup steps point to Ask AI, then Connect your own agent, in PlainHub.
+
+### Security
+- `plainhub auth` checks the pasted token with GitHub and does not save it when GitHub shows it can write to every repository. If it cannot tell, it saves the token with a note.
+- `plainhub post --role owner` now needs `--as-owner`, and a person at a terminal types the role to confirm.
+
+→ [Full release notes](https://github.com/ricrio-inc/plainhub/releases/tag/cli-v1.8.2)
+
+---
+
 ## [1.8.0] — 2026-11-07
 
 **Connect your own Claude Code, and a shared ledger for AI agents**
@@ -141,6 +173,8 @@ Until May 2026 this changelog followed the versions of the PlainHub app. These e
 
 ---
 
+[1.8.4]: https://github.com/ricrio-inc/plainhub/releases/tag/cli-v1.8.4
+[1.8.2]: https://github.com/ricrio-inc/plainhub/releases/tag/cli-v1.8.2
 [1.8.0]: https://github.com/ricrio-inc/plainhub/releases/tag/cli-v1.8.0
 [v1.4.0]: https://github.com/ricrio-inc/plainhub/releases/tag/v1.4.0
 [v1.2.0]: https://github.com/ricrio-inc/plainhub/releases/tag/v1.2.0

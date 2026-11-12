@@ -1,7 +1,7 @@
 # PlainHub
 
 <!-- generated: npm-hero -->
-**A GitHub editor, wired to Claude Code.** Open, write and save Markdown and plain-text files in your own GitHub repos from a browser or phone; every save is a commit.
+**A GitHub editor, wired to Claude Code.** Open, write and save Markdown and plain-text files in your own GitHub repos from a browser or phone; every save is a commit. Works with Claude Code and other MCP clients.
 <!-- /generated -->
 
 This package is the PlainHub CLI and MCP server. Connect your own Claude Code to the PlainHub AI panel, open files from the terminal, and keep a shared ledger for AI agents and people.
@@ -15,7 +15,7 @@ cd ~/notes        # your folder
 plainhub agent    # shows a pairing code
 ```
 
-Then, in PlainHub on the same PC: **Settings → AI → Connect your own agent**, and enter the code.
+Then, in PlainHub on the same PC: **Ask AI** (at the top) → **Connect your own agent**, and enter the code.
 
 **[Setup guide](https://github.com/ricrio-inc/plainhub/blob/main/docs/YOUR_AGENT.md)** — from your phone, what it can read, troubleshooting.
 
@@ -168,7 +168,7 @@ plainhub diff abc1234 -r owner/repo --path src/main.js  # Diff for specific file
 | `plainhub_diff` | Show commit diff in PlainHub |
 | `plainhub_post` | Add a message to a ledger thread |
 | `plainhub_decide` | Create a pending decision card |
-| `plainhub_ledger_init` | Start a ledger in the `PLAINHUB_LEDGER` folder (never overwrites) |
+| `plainhub_ledger_init` | Start a ledger in the `PLAINHUB_LEDGER` folder, or the repository the server was started in (never overwrites) |
 | `plainhub_ledger_sync` | Share the ledger through Git: commit `.agents`, pull --rebase, push (stops on a conflict) |
 | `plainhub_ledger_decisions` | List decision cards waiting for the owner, oldest first (read-only) |
 | `plainhub_ledger_thread` | Read a thread's messages in order: role, verdict, summary (read-only) |
@@ -243,7 +243,8 @@ plainhub ledger sync .    # commit .agents, receive others' changes (git pull --
 - Summary: one line, max 120 characters. Body: max 4KB
 - Body: Markdown as GitHub shows it — put a blank line between lines, or use a list (a single line break joins two lines into one). For a ledger written before this rule, `plainhub ledger format .` shows the line breaks it would change and `--write` saves them (front matter, code blocks, tables and lists stay as they are); check the diff and commit
 - Room language: write the summary and body in the language set by `.agents/room.md` (`type: room`, `language: ja` — a BCP 47 tag; English if not set). `post` and `decide` print it after writing (CLI: on standard error), and the MCP tools say it in their descriptions
-- MCP tools write only to the ledger set by the `PLAINHUB_LEDGER` environment variable. Set `PLAINHUB_ROLE` to pin the role; `owner` cannot post from MCP
+- MCP tools write only to the ledger set by the `PLAINHUB_LEDGER` environment variable, or, if it is not set, the Git repository folder the server was started in (not your home folder, and not a repository that holds your whole home folder, such as dotfiles). Set `PLAINHUB_ROLE` to pin the role; `owner` cannot post from MCP
+- An AI agent cannot post as `owner` from the CLI either: a person approves decision cards in PlainHub. If you are the owner at a terminal, add `--as-owner` and give the body with `--body-file`; it asks you to type `owner` to confirm
 
 ## Authentication
 
@@ -255,7 +256,7 @@ PlainHub supports three authentication methods:
 
 Check what the saved token can reach with `plainhub auth --status` (fine-grained: only the repositories you chose; classic or gh CLI: every repository).
 
-Classic tokens (`ghp_`) still work, but they reach every repository, so `plainhub auth` points you to a fine-grained token instead.
+`plainhub auth` checks the pasted token with GitHub and does not save a token that can write to every repository (a fine-grained token left at "All repositories", or a classic or gh CLI token with the `repo` or `public_repo` scope); it tells you why and how to create one for only the repositories you choose. For a fine-grained token it can tell only when you own three or more private repositories; otherwise it saves the token and reminds you to check "Only select repositories" on GitHub. Classic tokens (`ghp_`) cannot be limited to some repositories, so use a fine-grained token.
 
 Tokens are saved to `~/.config/plainhub/token` with `0600` permissions (owner-only read/write).
 

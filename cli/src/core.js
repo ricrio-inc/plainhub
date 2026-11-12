@@ -40,6 +40,7 @@ const PARAMS = {
     header:      { url: 'header' },
     dir:         { url: 'dir' },
     diff:        { url: 'diff' },
+    connect:     { url: 'connect' },   // connect=agent: open the screen to connect your own agent (MH1・app/js/url-params.js)
 };
 
 // トークン保存パス（SSOT）
@@ -73,6 +74,74 @@ export function tokenNotice(token) {
     if (token.startsWith('ghp_')) return `Note: this is a classic token, so it can reach every repository your account can. ${safer}`;
     if (token.startsWith('gho_')) return `Note: this is the gh CLI's token, so it has the access you gave gh (usually every repository your account can reach). ${safer}`;
     return null;
+}
+
+// 貼られた鍵が全部のリポに書けるか（YA5・2026-11-05 実測: 作成画面の Repository access の初期値が All repositories で、案内の1文を読み落とすとそのまま作れた）
+//   作成画面の URL ではリポの範囲を選べない（GitHub の公式の URL の項目は name・description・target_name・expires_in・権限だけ）→ 貼られた鍵を GitHub に聞いて確かめる
+//   返す形: { verdict: 'all', why } 保存しない／{ verdict: 'rejected' } GitHub が受け付けない＝保存しない／{ verdict: 'ok' }／
+//     { verdict: 'unsure' } 届く範囲を見分けられない（保存して一言）／{ verdict: 'unknown' } GitHub に確かめられない（保存して一言）
+//   古い型（ghp_）・gh（gho_）: GitHub が返す X-OAuth-Scopes に repo（全部のリポに書ける）か public_repo（全部の公開リポに書ける）があれば all
+//   fine-grained（github_pat_）: 鍵が「全部のリポ」かは GitHub に聞けない。自分の非公開リポは選んだ物しか見えない（All repositories なら全部見える）ので、
+//     持っている非公開リポ（/user の owned_private_repos）が ALL_REPOS_MIN 個以上あり、その全部に鍵が届けば all。
+//     ALL_REPOS_MIN 個より少ない時・組織の鍵（自分の非公開リポに1つも届かない）は見分けられない（メモと郵便受けの2つを選ぶのは手順どおり）＝ unsure
+//   App の利用者の鍵（ghu_）は入れた所だけに届く＝聞かない。鍵は api.github.com にだけ送る・鍵の値はどこにも出さない
+const GITHUB_API = 'https://api.github.com';
+const ALL_REPOS_MIN = 3;
+const REACH_PAGES = 10;   // 100件 × 10ページまで数える（それより多い人は数え終わらない＝unknown）
+//   時間切れは全部の問い合わせで1つ（gen-505 G3 低-2: 1回ずつだと最悪 11 回分待ち、MCP の側が先に切れた）
+export async function tokenReach(token, { fetch = globalThis.fetch, timeoutMs = 15000 } = {}) {
+    if (token.startsWith('ghu_')) return { verdict: 'ok' };
+    const signal = AbortSignal.timeout(timeoutMs);
+    const get = async (path) => {
+        const res = await fetch(GITHUB_API + path, { headers: { Accept: 'application/vnd.github+json', Authorization: `Bearer ${token}`, 'User-Agent': 'plainhub-cli', 'X-GitHub-Api-Version': '2022-11-28' }, signal, redirect: 'error' });
+        let json = null;
+        try { json = await res.json(); } catch { /* 本文なし */ }
+        return { status: res.status, json, scopes: res.headers.get('x-oauth-scopes') };
+    };
+    try {
+        const user = await get('/user');
+        if (user.status === 401) return { verdict: 'rejected' };
+        const login = user.json?.login;
+        if (user.status !== 200 || typeof login !== 'string') return { verdict: 'unknown' };
+        if (!token.startsWith('github_pat_')) {
+            if (user.scopes == null) return { verdict: 'unknown' };
+            const scopes = user.scopes.split(',').map(s => s.trim());
+            if (scopes.includes('repo')) return { verdict: 'all', why: 'it has the "repo" scope, so it can write to every repository your account can reach' };
+            if (scopes.includes('public_repo')) return { verdict: 'all', why: 'it has the "public_repo" scope, so it can write to every public repository your account can reach' };
+            return { verdict: 'ok' };
+        }
+        const owned = user.json.owned_private_repos;
+        if (!Number.isInteger(owned) || owned < 0) return { verdict: 'unknown' };
+        if (owned < ALL_REPOS_MIN) return { verdict: 'unsure' };
+        let reached = 0;
+        for (let page = 1; page <= REACH_PAGES; page++) {
+            const r = await get(`/user/repos?affiliation=owner&visibility=private&per_page=100&page=${page}`);
+            if (r.status !== 200 || !Array.isArray(r.json)) return { verdict: 'unknown' };
+            reached += r.json.filter(x => x?.private === true && typeof x?.owner?.login === 'string' && x.owner.login.toLowerCase() === login.toLowerCase()).length;
+            if (reached >= owned) return { verdict: 'all', why: `it can reach all ${owned} private repositories you own (on GitHub, "Repository access" was probably left at "All repositories"; if you picked every repository on purpose, pick only the ones PlainHub needs)` };
+            if (r.json.length < 100) return { verdict: reached ? 'ok' : 'unsure' };
+        }
+        return { verdict: 'unknown' };
+    } catch { return { verdict: 'unknown' }; }
+}
+
+// 貼られた鍵を保存してよいか（CLI の plainhub auth と MCP の plainhub_auth の同じ文・YA5）。保存しない時は { error }、保存する時は { note }（無ければ null）
+//   GitHub に届かない時（オフライン・時間切れ）は保存して確かめられなかったと一言（今までの動きより悪くしない）
+export async function tokenSaveCheck(token, opts) {
+    const reach = await tokenReach(token, opts);
+    if (reach.verdict === 'rejected') return { error: 'Not saved: GitHub did not accept this token (it may be expired, revoked or mistyped). Create a new one and run plainhub auth again.' };
+    if (reach.verdict === 'all') {
+        return { error: `Not saved: this token can write to every repository: ${reach.why}. Create a new token at ${GITHUB_TOKEN_URL} — under "Repository access" choose "Only select repositories" and pick only the repositories PlainHub needs — and run plainhub auth again. You can delete the token you pasted on GitHub (Settings > Developer settings > Personal access tokens).` };
+    }
+    //   古い型・gh の鍵はリポを選べない＝その鍵の一言（tokenNotice）。fine-grained は「Only select repositories」を選んだかの確かめ（gen-505 G2 中・G3 低-1・低-3）
+    if (reach.verdict === 'unknown' && !token.startsWith('github_pat_')) {
+        return { note: ['Could not check with GitHub which repositories this token can write to.', tokenNotice(token)].filter(Boolean).join(' ') };
+    }
+    if (reach.verdict === 'unknown' || reach.verdict === 'unsure') {
+        const lead = reach.verdict === 'unknown' ? 'Could not check with GitHub which repositories this token can write to.' : 'PlainHub cannot tell from GitHub whether this token reaches only the repositories you chose.';
+        return { note: `${lead} Make sure you chose "Only select repositories" for it on GitHub; if you left "All repositories", create a new one (${GITHUB_TOKEN_URL}) and run plainhub auth again.` };
+    }
+    return { note: tokenNotice(token) };
 }
 
 // 保存した鍵の状態（CLI の auth --status と MCP の plainhub_auth_status の同じ文・gen-125）: 型と届く範囲。

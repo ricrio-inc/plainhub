@@ -12,13 +12,13 @@
     { "src": "https://app.plainhub.dev/icons/icon-512.png", "mimeType": "image/png", "sizes": ["512x512"] },
     { "src": "https://plainhub.dev/favicon.svg", "mimeType": "image/svg+xml", "sizes": ["any"] }
   ],
-  "version": "1.8.0",
+  "version": "1.8.4",
   "packages": [
     {
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "plainhub",
-      "version": "1.8.0",
+      "version": "1.8.4",
       "runtimeHint": "npx",
       "transport": {
         "type": "stdio"

@@ -82,6 +82,8 @@ plainhub open README.md -r owner/repo
 
 ### MCP Server（AI IDE）
 
+**CLI と MCP のどちら？** CLI は、人やシェルを使える AI が使います。MCP サーバーを使うと、シェルを使えない AI ツールからも同じ操作を決まった形で呼び出せます。台帳の操作はどちらも同じコード（`cli/src/ledger.js`）で動きます。
+
 ```bash
 npm install -g plainhub
 claude mcp add plainhub -- plainhub-mcp

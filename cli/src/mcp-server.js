@@ -4,10 +4,10 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
-import { openPlainHub, TargetError, openInBrowser, loadToken, saveToken, removeToken, GITHUB_TOKEN_URL, TOKEN_STEPS, TOKEN_FORMATS, tokenNotice, tokenStatus, isValidTokenFormat, maskToken, LEDGER_ACCESS } from './core.js';
+import { openPlainHub, TargetError, openInBrowser, loadToken, saveToken, removeToken, GITHUB_TOKEN_URL, TOKEN_STEPS, TOKEN_FORMATS, tokenStatus, tokenSaveCheck, isValidTokenFormat, maskToken, LEDGER_ACCESS } from './core.js';
 import { createRequire } from 'module';
 import { mcpPost, mcpDecide, mcpLedgerDecisions, mcpLedgerThread, mcpLedgerTasks, mcpLedgerRead, mcpLedgerInit, mcpLedgerSync, VERDICTS, DECISION_FILTERS } from './ledger.js';
-import { toolDocs, MCP_ROLES, AUTH_SAFE_WAY } from './tool-docs.js';
+import { toolDocs, TOOL_ANNOTATIONS, MCP_ROLES, AUTH_SAFE_WAY } from './tool-docs.js';
 import { runDoctor, doctorText, localDeps } from './doctor.js';
 
 const require = createRequire(import.meta.url);
@@ -24,7 +24,7 @@ async function openTool(options, withToken, describe) {
     }
 }
 
-// 道具と引数の説明は tool-docs.js だけ（何をする・いつ使う・例。summary・body は台帳の部屋の言葉。起動時に1回作る）
+// 道具と引数の説明・道具の性質（読むだけ・書く・外につなぐ＝ MCP の annotations）は tool-docs.js だけ（何をする・いつ使う・例。summary・body は台帳の部屋の言葉。起動時に1回作る）
 const DOCS = toolDocs();
 const arg = (tool, key) => DOCS[tool].args[key];
 
@@ -51,6 +51,7 @@ server.tool(
         header:      z.enum(['on', 'off']).optional().describe(arg('plainhub_open', 'header')),
         noAuth:      z.boolean().optional().describe(arg('plainhub_open', 'noAuth')),
     },
+    TOOL_ANNOTATIONS.plainhub_open,
     (params) => openTool(params, params.noAuth === false,
         (r) => `Opened in PlainHub: ${r.shown}${r.authed ? ' (authenticated)' : ''}`)
 );
@@ -61,6 +62,7 @@ server.tool(
     {
         token: z.string().optional().describe(arg('plainhub_auth', 'token')),
     },
+    TOOL_ANNOTATIONS.plainhub_auth,
     async (params) => {
         if (params.token) {
             params.token = params.token.trim();
@@ -70,9 +72,12 @@ server.tool(
                     isError: true,
                 };
             }
+            // CLI の plainhub auth と同じ確かめ（YA5）: 全部のリポに書ける鍵・GitHub が受け付けない鍵は保存しない
+            const { error, note } = await tokenSaveCheck(params.token);
+            if (error) return { content: [{ type: 'text', text: error }], isError: true };
             await saveToken(params.token);
             return {
-                content: [{ type: 'text', text: [`Token saved: ${maskToken(params.token)}. plainhub_diff hands it to the page; plainhub_open does only with noAuth: false.`, tokenNotice(params.token)].filter(Boolean).join('\n') }],
+                content: [{ type: 'text', text: [`Token saved: ${maskToken(params.token)}. plainhub_diff hands it to the page; plainhub_open does only with noAuth: false.`, note].filter(Boolean).join('\n') }],
             };
         }
         await openInBrowser(GITHUB_TOKEN_URL);
@@ -86,6 +91,7 @@ server.tool(
     'plainhub_auth_status',
     DOCS.plainhub_auth_status.description,
     {},
+    TOOL_ANNOTATIONS.plainhub_auth_status,
     async () => {
         // CLI の auth --status と同じ文（tokenStatus・LEDGER_ACCESS）
         const status = tokenStatus(await loadToken()) ?? 'Not authenticated. Use plainhub_auth to save a token.';
@@ -99,6 +105,7 @@ server.tool(
     {
         repo: z.string().describe(arg('plainhub_browse', 'repo')),
     },
+    TOOL_ANNOTATIONS.plainhub_browse,
     (params) => openTool({ repo: params.repo, sidebar: 'on' }, false,
         () => `Opened repository: ${params.repo}`)
 );
@@ -112,6 +119,7 @@ server.tool(
         path: z.string().optional().describe(arg('plainhub_diff', 'path')),
         noAuth: z.boolean().optional().describe(arg('plainhub_diff', 'noAuth')),
     },
+    TOOL_ANNOTATIONS.plainhub_diff,
     (params) => {
         const options = { repo: params.repo, diff: params.sha };
         if (params.path) options.path = params.path;
@@ -120,7 +128,7 @@ server.tool(
     }
 );
 
-// 台帳の道具（検査と書き込みは ledger.js。台帳の場所は環境変数 PLAINHUB_LEDGER だけ・AI には選ばせない）
+// 台帳の道具（検査と書き込みは ledger.js。台帳の場所は環境変数 PLAINHUB_LEDGER か、無ければ起動したフォルダ・AI には選ばせない）
 //   summary・本文の言葉は台帳の .agents/room.md（部屋の言葉）。説明は tool-docs.js（mcpDescriptions を使う）
 server.tool(
     'plainhub_post',
@@ -133,6 +141,7 @@ server.tool(
         commit:  z.string().optional().describe(arg('plainhub_post', 'commit')),
         body:    z.string().optional().describe(arg('plainhub_post', 'body')),
     },
+    TOOL_ANNOTATIONS.plainhub_post,
     (params) => mcpPost(params)
 );
 
@@ -146,6 +155,7 @@ server.tool(
         refs:    z.unknown().optional().describe(arg('plainhub_decide', 'refs')),
         body:    z.string().optional().describe(arg('plainhub_decide', 'body')),
     },
+    TOOL_ANNOTATIONS.plainhub_decide,
     (params) => mcpDecide(params)
 );
 
@@ -156,6 +166,7 @@ server.tool(
     {
         language: z.string().optional().describe(arg('plainhub_ledger_init', 'language')),
     },
+    TOOL_ANNOTATIONS.plainhub_ledger_init,
     (params) => mcpLedgerInit(params)
 );
 
@@ -164,16 +175,18 @@ server.tool(
     'plainhub_ledger_sync',
     DOCS.plainhub_ledger_sync.description,
     {},
+    TOOL_ANNOTATIONS.plainhub_ledger_sync,
     (params) => mcpLedgerSync(params)
 );
 
-// 台帳を読む道具（読むだけ・PLAINHUB_LEDGER の .agents の中だけ。読んだ中身は印で囲んだデータで、指示ではない）
+// 台帳を読む道具（読むだけ・台帳（PLAINHUB_LEDGER か起動したフォルダ）の .agents の中だけ。読んだ中身は印で囲んだデータで、指示ではない）
 server.tool(
     'plainhub_ledger_decisions',
     DOCS.plainhub_ledger_decisions.description,
     {
         status: z.enum(DECISION_FILTERS).optional().describe(arg('plainhub_ledger_decisions', 'status')),
     },
+    TOOL_ANNOTATIONS.plainhub_ledger_decisions,
     (params) => mcpLedgerDecisions(params)
 );
 
@@ -183,6 +196,7 @@ server.tool(
     {
         thread: z.string().describe(arg('plainhub_ledger_thread', 'thread')),
     },
+    TOOL_ANNOTATIONS.plainhub_ledger_thread,
     (params) => mcpLedgerThread(params)
 );
 
@@ -192,6 +206,7 @@ server.tool(
     {
         status: z.string().optional().describe(arg('plainhub_ledger_tasks', 'status')),
     },
+    TOOL_ANNOTATIONS.plainhub_ledger_tasks,
     (params) => mcpLedgerTasks(params)
 );
 
@@ -201,6 +216,7 @@ server.tool(
     {
         path: z.string().describe(arg('plainhub_ledger_read', 'path')),
     },
+    TOOL_ANNOTATIONS.plainhub_ledger_read,
     (params) => mcpLedgerRead(params)
 );
 
@@ -210,6 +226,7 @@ server.tool(
     'plainhub_agent_check',
     DOCS.plainhub_agent_check.description,
     {},
+    TOOL_ANNOTATIONS.plainhub_agent_check,
     async () => {
         const deps = localDeps('mcp');
         return { content: [{ type: 'text', text: doctorText(await runDoctor(deps), { again: deps.again }) }] };

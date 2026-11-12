@@ -9,7 +9,8 @@
 //   外部の依存なし。front matter は「key: 値」・引用符つきの文字列・リストだけの単純な YAML に限る
 
 import { lstatSync, mkdirSync, openSync, writeSync, closeSync, readdirSync, readFileSync, readSync, realpathSync, renameSync, statSync, fstatSync, fchmodSync, unlinkSync, constants as fsConstants } from 'fs';
-import { join, relative, resolve, isAbsolute, sep, basename, dirname } from 'path';
+import { join, relative, resolve, isAbsolute, sep, basename, dirname, parse } from 'path';
+import { homedir } from 'os';
 import { randomBytes } from 'crypto';
 import { spawnSync } from 'child_process';
 import { LEDGER_ACCESS, buildUrl, githubRepoFromRemote, resolveBaseUrl, TargetError } from './core.js';
@@ -20,8 +21,13 @@ export const CORE_ROLES = ['dev', 'reviewer', 'security', 'owner'];
 export const VERDICTS = ['pass', 'fail', 'changes-requested', 'approved', 'info'];
 export const STATUSES = ['pending', 'approved', 'rejected'];
 export const LIMITS = { summary: 120, body: 4096, ref: 200, refCount: 20, file: 65536, depth: 6, files: 5000, number: 9999 };
-// MCP（AI）からは選べない担当（人の判断は PlainHub の画面のボタンで、人の GitHub アカウントのコミットとして残す）
-export const MCP_DENIED_ROLES = ['owner'];
+// エージェント（AI）からは選べない担当（人の判断は PlainHub の画面のボタンで、人の GitHub アカウントのコミットとして残す）
+//   MCP は常に止める。CLI の post も既定で止め、人が端末で --as-owner と確認を打った時だけ通す（gen-519・LR1）
+export const AGENT_DENIED_ROLES = ['owner'];
+// owner の代わりに使える芯の担当
+const AGENT_CORE_ROLES = CORE_ROLES.filter((r) => !AGENT_DENIED_ROLES.includes(r));
+// 止めた時の文（MCP と CLI で同じ1か所）。via: 'MCP' か 'the CLI'
+export const agentDeniedRoleText = (role, via) => `role ${role} cannot be used from ${via}: a person approves or rejects decision cards in PlainHub. Post as ${AGENT_CORE_ROLES.join(', ')}; nothing was written`;
 
 // スレッド名・判断カードの id（英小文字・数字を - と . でつなぐ。/ や .. を含めない）
 const SLUG = /^[a-z0-9]+(?:[-.][a-z0-9]+)*$/;
@@ -1528,17 +1534,39 @@ export function entryText(r) {
 }
 
 // ---- MCP の道具（mcp-server.js はこれを登録するだけ）----
-//   台帳の場所は環境変数 PLAINHUB_LEDGER だけ（AI に書く場所を選ばせない）
+//   台帳の場所は環境変数 PLAINHUB_LEDGER、無ければサーバーを起動したフォルダ（AI に書く場所を選ばせない）
 //   担当は PLAINHUB_ROLE があればそれに固定。owner は選べない（AI が人の判断を装わない）
 
-// 台帳の場所が無い時は、MCP の設定で渡す直し方を返す（MCP に --ledger は無い・gen-123）
-const MCP_NO_LEDGER = 'PLAINHUB_LEDGER is not set: the ledger tools need the folder of your Git repository. Add the server with it, e.g. claude mcp add plainhub -e PLAINHUB_LEDGER=/path/to/repo -- plainhub-mcp (Cursor: "env": {"PLAINHUB_LEDGER": "/path/to/repo"} in .cursor/mcp.json), then restart the session. Nothing was done';
+// 台帳の場所（gen-506・GOAL 順番 PG7）: PLAINHUB_LEDGER があればそのフォルダ。無ければサーバーを起動したフォルダ
+//   （Claude Code は始めたフォルダでサーバーを起動する＝プラグインの .mcp.json に env を書かない・公式のプラグインの一覧の決まり
+//   「固定の値はサーバーの中で決める」。前は .mcp.json の ${PLAINHUB_LEDGER:-.} で同じことをしていた）。
+//   起動したフォルダがホームか一番上（/）か、Git のリポの中でない時は止める（ほかの道具がホームや Downloads で起動しても、そこに台帳を始めない・G2 G3 1巡目 低）。
+//   リポの一番上がホームかホームより上（ホーム自体が dotfiles のリポ・/ がリポなど）の時も止める（Downloads で起動すると init と sync で
+//   ホームのリポの送り先へ送れた・gen-541 FL20）。ホームの下の別のリポ（~/src/app）は一番内側のリポで決まるので今どおり動く。
+//   空白だけの PLAINHUB_LEDGER は設定の誤りとして止める（起動したフォルダに黙って替えない）。MCP に --ledger は無い（gen-123）
+const MCP_SET_LEDGER = 'claude mcp add plainhub -e PLAINHUB_LEDGER=/path/to/repo -- plainhub-mcp (Cursor: "env": {"PLAINHUB_LEDGER": "/path/to/repo"} in .cursor/mcp.json), then restart the session. Nothing was done';
+const MCP_NO_LEDGER = `PLAINHUB_LEDGER is not set: the ledger tools need the folder of your Git repository. Add the server with it, e.g. ${MCP_SET_LEDGER}`;
+const MCP_HOME_LEDGER = (where) => `PLAINHUB_LEDGER is not set and this server was started in ${where}: start Claude Code at the top of your Git repository, or add the server with the folder, e.g. ${MCP_SET_LEDGER}`;
+const samePath = (a, b) => { try { return realpathSync(a) === realpathSync(b); } catch { return false; } };
+// a が b と同じか b より上のフォルダ（読めなければ true＝止める側）
+const sameOrAbove = (a, b) => { try { const r = relative(realpathSync(a), realpathSync(b)); return !(r === '..' || r.startsWith(`..${sep}`) || isAbsolute(r)); } catch { return true; } };
 function mcpLedger(env) {
-    if (!isString(env.PLAINHUB_LEDGER) || !env.PLAINHUB_LEDGER.trim()) throw new LedgerError(MCP_NO_LEDGER);
-    return env.PLAINHUB_LEDGER;
+    if (env.PLAINHUB_LEDGER !== undefined) {
+        if (!isString(env.PLAINHUB_LEDGER) || !env.PLAINHUB_LEDGER.trim()) throw new LedgerError(MCP_NO_LEDGER);
+        return env.PLAINHUB_LEDGER;
+    }
+    const cwd = process.cwd();
+    if (samePath(cwd, homedir())) throw new LedgerError(MCP_HOME_LEDGER('your home folder, not in a repository'));
+    if (parse(resolve(cwd)).root === resolve(cwd)) throw new LedgerError(MCP_HOME_LEDGER('the top folder of the disk, not in a repository'));
+    if (gitOut(cwd, ['rev-parse', '--is-inside-work-tree']) !== 'true') throw new LedgerError(MCP_HOME_LEDGER('a folder that is not in a Git repository'));
+    const top = gitOut(cwd, ['rev-parse', '--show-toplevel']);
+    if (!top || sameOrAbove(top, homedir())) throw new LedgerError(MCP_HOME_LEDGER('a Git repository that holds your whole home folder (such as dotfiles), not a project repository'));
+    return cwd;
 }
-// owner の代わりに使える芯の担当（人の判断は PlainHub の画面のボタンで）
-const MCP_CORE_ROLES = CORE_ROLES.filter((r) => !MCP_DENIED_ROLES.includes(r));
+// 道具の説明・部屋の言葉を読む時の場所（読めなければ null＝英語の既定。止めない）
+const mcpLedgerOrNull = (env) => { try { return mcpLedger(env); } catch { return null; } };
+// 返事の文で台帳のフォルダを指す言い方（指定が無い時に PLAINHUB_LEDGER のフォルダと言わない）
+const mcpLedgerName = (env) => env.PLAINHUB_LEDGER !== undefined ? 'the PLAINHUB_LEDGER folder' : 'the folder the server was started in';
 
 const MCP_SYNC = 'plainhub_ledger_sync';
 const mcpText = (text, isError = false) => ({ content: [{ type: 'text', text }], ...(isError ? { isError: true } : {}) });
@@ -1553,17 +1581,18 @@ function mcpRun(fn) {
 
 export async function mcpPost(params, env = process.env) {
     return mcpRun(() => {
-        if (MCP_DENIED_ROLES.includes(params.role)) throw new LedgerError(`role ${params.role} cannot be used from MCP: a person approves or rejects decision cards in PlainHub. Post as ${MCP_CORE_ROLES.join(', ')}; nothing was written`);
+        if (AGENT_DENIED_ROLES.includes(params.role)) throw new LedgerError(agentDeniedRoleText(params.role, 'MCP'));
         if (env.PLAINHUB_ROLE && params.role !== env.PLAINHUB_ROLE) {
             // 値を出すのは MCP で使える担当の時だけ（設定の文を AI にそのまま渡さない・owner は案内しない・gen-123 G3）
-            const usable = ROLES.filter((r) => !MCP_DENIED_ROLES.includes(r));
+            const usable = ROLES.filter((r) => !AGENT_DENIED_ROLES.includes(r));
             throw new LedgerError(usable.includes(env.PLAINHUB_ROLE)
                 ? `role must match PLAINHUB_ROLE: post with role ${env.PLAINHUB_ROLE} (it is set for this server); nothing was written`
                 : `PLAINHUB_ROLE is not a role that can post from MCP (use one of ${usable.join(', ')} in the server settings); nothing was written`);
         }
         const { thread, role, verdict, summary, commit, body = '' } = params;
-        const r = postMessage({ ledger: mcpLedger(env), thread, role, verdict, summary, commit, body });
-        return `Posted ${r.id}: ${r.rel}\n${languageNote(roomLanguage(env.PLAINHUB_LEDGER))}\n${openLinkText(env.PLAINHUB_LEDGER, { path: r.rel }, { env, sync: MCP_SYNC })}`;
+        const ledger = mcpLedger(env);
+        const r = postMessage({ ledger, thread, role, verdict, summary, commit, body });
+        return `Posted ${r.id}: ${r.rel}\n${languageNote(roomLanguage(ledger))}\n${openLinkText(ledger, { path: r.rel }, { env, sync: MCP_SYNC })}`;
     });
 }
 
@@ -1572,18 +1601,20 @@ export async function mcpDecide(params, env = process.env) {
         // 名前の変わった refs を黙って捨てない（関連が消えたまま「書けた」にしない）
         if (params.refs !== undefined) throw new LedgerError('refs is renamed to ref; nothing was written');
         const { id, summary, ref, body = '' } = params;
-        const r = createDecision({ ledger: mcpLedger(env), id, summary, ref, body });
-        return `Decision card created (pending): ${r.rel}\n${languageNote(roomLanguage(env.PLAINHUB_LEDGER))}\n${openLinkText(env.PLAINHUB_LEDGER, { path: r.rel }, { env, sync: MCP_SYNC, card: true })}`;
+        const ledger = mcpLedger(env);
+        const r = createDecision({ ledger, id, summary, ref, body });
+        return `Decision card created (pending): ${r.rel}\n${languageNote(roomLanguage(ledger))}\n${openLinkText(ledger, { path: r.rel }, { env, sync: MCP_SYNC, card: true })}`;
     });
 }
 
 export async function mcpLedgerInit(params, env = process.env) {
     return mcpRun(() => {
-        const r = initLedger({ ledger: mcpLedger(env), language: params.language ?? DEFAULT_LANGUAGE });
-        return initText(r, env.PLAINHUB_LEDGER, [
-            ...(r.created.length ? ['commit .agents in the PLAINHUB_LEDGER folder (git add .agents && git commit)'] : []),
+        const ledger = mcpLedger(env);
+        const r = initLedger({ ledger, language: params.language ?? DEFAULT_LANGUAGE });
+        return initText(r, ledger, [
+            ...(r.created.length ? [`commit .agents in ${mcpLedgerName(env)} (git add .agents && git commit)`] : []),
             'plainhub_post adds a message to a thread; plainhub_decide raises a card for a person',
-        ], openLinkText(env.PLAINHUB_LEDGER, { dir: '.agents' }, { env, sync: MCP_SYNC }));
+        ], openLinkText(ledger, { dir: '.agents' }, { env, sync: MCP_SYNC }));
     });
 }
 
@@ -1592,7 +1623,7 @@ export async function mcpLedgerSync(params, env = process.env) {
     return mcpRun(() => syncText(syncLedger({ ledger: mcpLedger(env) })));
 }
 
-// 読む道具（台帳の場所は PLAINHUB_LEDGER だけ・引数の ledger は使わない）
+// 読む道具（台帳の場所は PLAINHUB_LEDGER か起動したフォルダ・引数の ledger は使わない）
 export async function mcpLedgerDecisions(params, env = process.env) {
     return mcpRun(() => decisionsText(listDecisions({ ledger: mcpLedger(env), status: params.status ?? 'pending' })));
 }
@@ -1611,7 +1642,7 @@ export async function mcpLedgerRead(params, env = process.env) {
 
 // MCP の道具の説明（サーバの起動時に1回読む。台帳が無ければ「部屋の言葉で」とだけ書く）
 export function mcpDescriptions(env = process.env) {
-    const lang = roomLanguage(env.PLAINHUB_LEDGER);
+    const lang = roomLanguage(mcpLedgerOrNull(env));
     const where = lang.source === 'room' ? `in ${lang.name} (${lang.tag}), the room language` : `in the room language (.agents/${ROOM_FILE} language:; ${lang.name} if not set)`;
     return {
         summary: `One line ${where}, max ${LIMITS.summary} characters`,
