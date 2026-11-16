@@ -13,10 +13,10 @@ Pick where you want to ask, then follow that part from top to bottom. The two pa
 
 | Where you ask | What you enter in PlainHub | Start the agent with |
 |---|---|---|
-| PlainHub on the **same PC** (Chrome or Edge) | the 6-digit **pairing code** | `plainhub agent` |
-| PlainHub on your **phone** | the **mailbox repository name** (`you/private-repo`) — not the pairing code | `plainhub agent --mailbox you/private-repo` |
+| PlainHub on the **same PC** (Chrome or Edge) | nothing to type: open the **link** the agent shows, and confirm | `plainhub agent` |
+| PlainHub on your **phone** | the **mailbox repository name** (`you/private-repo`) — not the link | `plainhub agent --mailbox you/private-repo` |
 
-The pairing code works only in a browser on the same PC. On a phone, it always ends with “No agent found” — use [From your phone](#from-your-phone) instead.
+The link works only in a browser on the same PC. On a phone, it always ends with “No agent found” — use [From your phone](#from-your-phone) instead.
 
 ## What you need
 
@@ -48,7 +48,7 @@ cd ~/notes
 plainhub agent
 ```
 
-It shows the folder, and a 6-digit **pairing code**:
+It shows the folder, and a **link** that connects PlainHub, and opens the link in your browser:
 
 ```text
 PlainHub agent — Claude Code, read-only
@@ -56,8 +56,11 @@ PlainHub agent — Claude Code, read-only
   Listening on http://127.0.0.1:47110  (this PC only)
   Sites:   https://app.plainhub.dev
 
-  Pairing code: 123456
-  In PlainHub: "Ask AI" (at the top) → "Connect your own agent", then enter the code.
+  Connect PlainHub in your browser on this PC (Chrome or Edge) with this link:
+  Link: https://app.plainhub.dev/#connect=agent&key=…&port=47110
+  Then confirm in PlainHub (it opens in your browser now; if not, open the link yourself). If your browser asks to access apps on this device, choose Allow.
+  Or in PlainHub: "Ask AI" (at the top) → "Connect your own agent", and paste the link.
+  The link works until you stop this agent. Don't share it: it lets a browser use this agent.
 
 Press Ctrl+C to stop.
 ```
@@ -68,13 +71,13 @@ Leave this terminal open. The agent answers only while it is running.
 
 ### 3. Connect PlainHub
 
-1. In PlainHub on the same PC, click “Ask AI” at the top, then “Connect your own agent” (the same button is also in “Settings” (⚙️), under “AI”)
-2. Enter the pairing code and click “Connect”
+1. Your browser opens PlainHub with the link. PlainHub asks once whether to connect to your agent in that folder: click “Connect”
+2. If the browser didn't open (on some PCs, such as WSL, it can't), open the link from the terminal yourself. Or, in PlainHub on the same PC, click “Ask AI” at the top, then “Connect your own agent” (the same button is also in “Settings” (⚙️), under “AI”), and paste the link
 3. If your browser asks to let the site access apps on your device or local network, choose **Allow**
 
-If two agents are running (in two folders), PlainHub asks “Which folder?” — pick one, then click “Connect” again.
+The link names its folder's agent, so with two agents running (in two folders), each link connects to its own.
 
-You only pair once per browser. When you start the agent again later, PlainHub connects to it without a new code.
+You only connect once per browser. When you start the agent again later, PlainHub connects to it without a new link. The link stops working when you stop the agent; the next start shows a new one. Don't share the link: anyone with it can use this agent from a browser on this PC.
 
 ### Let Claude Code set it up
 
@@ -117,7 +120,7 @@ cd ~/notes
 plainhub agent --cockpit
 ```
 
-The first line then says `PlainHub agent — Claude Code, Cockpit mode`. Connect PlainHub with the pairing code, as above.
+The first line then says `PlainHub agent — Claude Code, Cockpit mode`. Connect PlainHub with the link, as above.
 
 In the AI panel, the button at the top shows the mode. Click it to switch; the new mode applies from your next question.
 
@@ -175,7 +178,7 @@ When Claude Code has created a repository, PlainHub opens it. If you let PlainHu
 
 - **Stop the agent:** press Ctrl+C in its terminal (or close the window). This also stops Claude Code if it is still answering
 - **Stop using it in PlainHub:** “Settings” → “AI” → “Disconnect”. The AI panel goes back to how it was
-- **Forget all paired browsers:** `plainhub agent --forget` (they need a new pairing code next time)
+- **Forget all paired browsers:** `plainhub agent --forget` (connect them again with the link the agent shows)
 
 ## What it can read
 
@@ -189,7 +192,7 @@ Without `--cockpit` (the default):
 
 In [Cockpit mode](#cockpit-mode), it can do more: in Auto, it changes files and runs commands that Claude Code judges safe without asking, and asks you in the panel about the rest. Your `deny` rules in `~/.claude` still block.
 
-- Only browsers paired with the code, on PlainHub's own sites, can ask. Someone else's website can't
+- Only browsers connected with the link, on PlainHub's own sites, can ask. Someone else's website can't
 - The agent listens on 127.0.0.1 only (ports 47110–47114) — other devices on your network can't reach it
 - With `--mailbox`, the agent only uses a private repository that only you can write to, and answers only questions written by you
 
@@ -213,7 +216,7 @@ Open PlainHub in Chrome or Edge on your PC. On a phone, use [From your phone](#f
 
 > Your agent isn’t running. Start it with `plainhub agent` in your folder, then ask again.
 
-**On your phone?** The pairing code works only in a browser on the same PC. Use [From your phone](#from-your-phone) and enter the mailbox repository name instead.
+**On your phone?** The link works only in a browser on the same PC. Use [From your phone](#from-your-phone) and enter the mailbox repository name instead.
 
 Start `plainhub agent` in your folder again (the terminal may have been closed, or the PC restarted). If Chrome or Edge asked about access to apps on your device and you chose Block, allow it in the site settings (the icon left of the address) and try again.
 
@@ -221,15 +224,19 @@ Start `plainhub agent` in your folder again (the terminal may have been closed, 
 
 Chrome and Edge may ask whether app.plainhub.dev can access apps on your device or local network. Choose **Allow** — that's how the page reaches the agent on your own PC (127.0.0.1). Nothing else on your network is used.
 
-### Wrong code
+### The link didn't work
 
-> Wrong code. The code changes each time you connect — enter the newest code in the agent's terminal (the last “Next pairing code”, if there is one).
+> That link didn't work. Use the newest link in the agent's terminal — plainhub agent makes a new one each time it starts.
 
-The code works once. After a browser connects, the terminal shows a `Next pairing code` — use that one next time.
+The link works until you stop the agent. A link from an earlier start doesn't work: open (or paste) the one the agent shows now.
 
-> Too many wrong codes, so your agent stopped pairing. Restart it (Ctrl+C in its terminal, then run plainhub agent again) and enter the new code it shows.
+> The agent this link is for is no longer running. Start plainhub agent again and open the new link it shows.
 
-After 5 wrong codes the agent stops pairing. Press Ctrl+C, start it again, and enter the new code.
+> Too many tries. Wait a minute, then paste the link again.
+
+> Your agent is an older version that uses a 6-digit code. Update it (npm i -g plainhub), start it again, and open the link it shows — or enter the 6-digit code it shows.
+
+Versions before 1.8.5 show a 6-digit code instead of a link. Run `npm i -g plainhub`, then start the agent again.
 
 ### Claude Code was not found
 

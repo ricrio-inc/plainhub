@@ -17,7 +17,7 @@ If the `plainhub` command is already installed, run `plainhub doctor` first. It 
 
 The setup steps for an AI assistant are on one page, for the same `plainhub` version as this plugin:
 
-https://raw.githubusercontent.com/ricrio-inc/plainhub/cli-v1.8.4/docs/AGENT_SETUP.md
+https://raw.githubusercontent.com/ricrio-inc/plainhub/cli-v1.8.5/docs/AGENT_SETUP.md
 
 Read that page (only that page) and follow it from top to bottom. In short, it has you check Node.js with `node -v`, install with `npm i -g plainhub` if needed, check the PC with `plainhub doctor`, ask the person which folder to use, ask whether they want to ask on this PC or from their phone, and tell them the exact command to start the agent in their own terminal. Then they connect in PlainHub: on this PC, “Ask AI” at the top, then “Connect your own agent” (the “On this PC” tab); on a phone, “AI” at the top, then “Connect your own agent” → “From your phone”.
 

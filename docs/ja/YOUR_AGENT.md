@@ -13,10 +13,10 @@ PlainHub の AIパネルで、メモやコードについて質問すると、**
 
 | どこで聞くか | PlainHub に入れるもの | agent の起動 |
 |---|---|---|
-| **同じ PC** の PlainHub（Chrome か Edge） | 6桁の**合言葉** | `plainhub agent` |
-| **スマホ**の PlainHub | **郵便受けのリポジトリの名前**（`you/private-repo`）。合言葉ではありません | `plainhub agent --mailbox you/private-repo` |
+| **同じ PC** の PlainHub（Chrome か Edge） | 入れるものはありません。agent が出す**リンク**を開いて、確かめを1回押します | `plainhub agent` |
+| **スマホ**の PlainHub | **郵便受けのリポジトリの名前**（`you/private-repo`）。リンクではありません | `plainhub agent --mailbox you/private-repo` |
 
-合言葉が使えるのは、同じ PC のブラウザだけです。スマホで入れると、必ず「No agent found」で終わります。スマホでは [スマホから聞く](#スマホから聞く) の手順を使ってください。
+リンクが使えるのは、同じ PC のブラウザだけです。スマホで開くと、必ず「No agent found」で終わります。スマホでは [スマホから聞く](#スマホから聞く) の手順を使ってください。
 
 ## 用意するもの
 
@@ -48,7 +48,7 @@ cd ~/notes
 plainhub agent
 ```
 
-フォルダと、6桁の**合言葉**（Pairing code）が表示されます。
+フォルダと、PlainHub とつなぐ**リンク**が表示され、そのリンクがブラウザで開きます。
 
 ```text
 PlainHub agent — Claude Code, read-only
@@ -56,8 +56,11 @@ PlainHub agent — Claude Code, read-only
   Listening on http://127.0.0.1:47110  (this PC only)
   Sites:   https://app.plainhub.dev
 
-  Pairing code: 123456
-  In PlainHub: "Ask AI" (at the top) → "Connect your own agent", then enter the code.
+  Connect PlainHub in your browser on this PC (Chrome or Edge) with this link:
+  Link: https://app.plainhub.dev/#connect=agent&key=…&port=47110
+  Then confirm in PlainHub (it opens in your browser now; if not, open the link yourself). If your browser asks to access apps on this device, choose Allow.
+  Or in PlainHub: "Ask AI" (at the top) → "Connect your own agent", and paste the link.
+  The link works until you stop this agent. Don't share it: it lets a browser use this agent.
 
 Press Ctrl+C to stop.
 ```
@@ -68,13 +71,13 @@ Press Ctrl+C to stop.
 
 ### 3. PlainHub とつなぐ
 
-1. 同じ PC の PlainHub で、上の「Ask AI」を押し、「Connect your own agent」を押します（「Settings」（⚙️）の「AI」にも同じボタンがあります）
-2. 合言葉を入れて「Connect」を押します
+1. リンクでブラウザに PlainHub が開きます。そのフォルダの agent につなぐかを1回だけ聞かれるので、「Connect」を押します
+2. ブラウザが開かなかったとき（WSL など、開けない PC もあります）は、ターミナルのリンクを自分で開きます。PlainHub で上の「Ask AI」→「Connect your own agent」を押し、リンクを貼り付けてもつながります。「Settings」（⚙️）の「AI」にも同じボタンがあります
 3. ブラウザが「このデバイスのアプリやローカルネットワークへのアクセス」を聞いてきたら、**許可**を選びます
 
-agent を2つ（2つのフォルダで）起動していると、PlainHub が「Which folder?」と聞きます。1つ選んで、もう一度「Connect」を押してください。
+リンクには、どのフォルダの agent かが入っています。agent を2つ（2つのフォルダで）起動していても、それぞれのリンクで、それぞれのフォルダにつながります。
 
-合言葉でつなぐのは、ブラウザごとに1回だけです。あとで agent を起動し直したときは、新しい合言葉なしで PlainHub がつなぎます。
+リンクでつなぐのは、ブラウザごとに1回だけです。あとで agent を起動し直したときは、新しいリンクなしで PlainHub がつなぎます。リンクは agent を止めると使えなくなり、次に起動したときは新しいリンクが出ます。リンクはほかの人に渡さないでください。リンクを持っている人は、この PC のブラウザからこの agent を使えます。
 
 ### Claude Code に任せる
 
@@ -117,7 +120,7 @@ cd ~/notes
 plainhub agent --cockpit
 ```
 
-このとき、1行目が `PlainHub agent — Claude Code, Cockpit mode` になります。上と同じく、合言葉で PlainHub とつなぎます。
+このとき、1行目が `PlainHub agent — Claude Code, Cockpit mode` になります。上と同じく、リンクで PlainHub とつなぎます。
 
 AIパネルでは、上のボタンに今のモードが出ます。押すと切り替わり、次の質問から新しいモードになります。
 
@@ -175,7 +178,7 @@ Claude Code がリポジトリを作ると、PlainHub がそれを開きます�
 
 - **agent を止める:** そのターミナルで Ctrl+C を押します（またはウィンドウを閉じます）。Claude Code が答えている途中なら、それも止まります
 - **PlainHub で使うのをやめる:** 「Settings」→「AI」→「Disconnect」。AIパネルは元の状態に戻ります
-- **つないだブラウザをすべて忘れさせる:** `plainhub agent --forget`（次からは新しい合言葉が要ります）
+- **つないだブラウザをすべて忘れさせる:** `plainhub agent --forget`（次は agent が出すリンクで、もう一度つなぎます）
 
 ## 読めるもの
 
@@ -189,7 +192,7 @@ Claude Code がリポジトリを作ると、PlainHub がそれを開きます�
 
 [Cockpit モード](#cockpit-モード) では、もっと多くのことができます。Auto では、Claude Code が安全だと判断したファイルの書き換えとコマンドを聞かずに行い、それ以外はパネルであなたに聞きます。`~/.claude` の `deny` の決まりは、このときも効きます。
 
-- 質問できるのは、合言葉でつないだブラウザの、PlainHub 自身のサイトだけです。ほかの人のウェブサイトからは聞けません
+- 質問できるのは、リンクでつないだブラウザの、PlainHub 自身のサイトだけです。ほかの人のウェブサイトからは聞けません
 - agent は 127.0.0.1 だけで待ち受けます（ポート 47110〜47114）。同じネットワークのほかの機器からは届きません
 - `--mailbox` を付けたとき、agent は自分だけが書き込めるプライベートリポジトリだけを使い、あなたが書いた質問にだけ答えます
 
@@ -213,7 +216,7 @@ PC の Chrome か Edge で PlainHub を開いてください。スマホでは [
 
 > Your agent isn’t running. Start it with `plainhub agent` in your folder, then ask again.
 
-**スマホで開いていますか？** 合言葉が使えるのは、同じ PC のブラウザだけです。[スマホから聞く](#スマホから聞く) の手順で、郵便受けのリポジトリの名前を入れてください。
+**スマホで開いていますか？** リンクが使えるのは、同じ PC のブラウザだけです。[スマホから聞く](#スマホから聞く) の手順で、郵便受けのリポジトリの名前を入れてください。
 
 フォルダで、もう一度 `plainhub agent` を起動してください（ターミナルを閉じた、または PC を再起動したのかもしれません）。Chrome や Edge が「このデバイスのアプリへのアクセス」を聞いたときに「ブロック」を選んでいた場合は、サイトの設定（アドレスの左のアイコン）で許可してから、もう一度試してください。
 
@@ -221,15 +224,19 @@ PC の Chrome か Edge で PlainHub を開いてください。スマホでは [
 
 Chrome と Edge は、app.plainhub.dev がこのデバイスのアプリやローカルネットワークにアクセスしてよいかを聞くことがあります。**許可**を選んでください。ページはこの方法で、あなたの PC（127.0.0.1）の agent に届きます。ネットワークのほかの機器は使いません。
 
-### 合言葉が違う
+### リンクでつながらない
 
-> Wrong code. The code changes each time you connect — enter the newest code in the agent's terminal (the last “Next pairing code”, if there is one).
+> That link didn't work. Use the newest link in the agent's terminal — plainhub agent makes a new one each time it starts.
 
-合言葉は1回しか使えません。ブラウザがつながると、ターミナルに `Next pairing code` が出ます。次はそちらを使ってください。
+リンクが使えるのは、agent を止めるまでです。前に起動したときのリンクは使えません。今の agent が出しているリンクを開くか、貼り付けてください。
 
-> Too many wrong codes, so your agent stopped pairing. Restart it (Ctrl+C in its terminal, then run plainhub agent again) and enter the new code it shows.
+> The agent this link is for is no longer running. Start plainhub agent again and open the new link it shows.
 
-合言葉を5回間違えると、agent はつなぐのをやめます。Ctrl+C を押して起動し直し、新しい合言葉を入れてください。
+> Too many tries. Wait a minute, then paste the link again.
+
+> Your agent is an older version that uses a 6-digit code. Update it (npm i -g plainhub), start it again, and open the link it shows — or enter the 6-digit code it shows.
+
+1.8.5 より前の版は、リンクの代わりに6桁の合言葉を出します。`npm i -g plainhub` を実行してから、agent を起動し直してください。
 
 ### Claude Code が見つからない
 

@@ -146,7 +146,7 @@ export async function runDoctor({
             fix: 'Stop another plainhub agent (Ctrl+C in its terminal), or the program using these ports, then try again.' });
 
     const paired = pairedCount();
-    checks.push({ id: 'paired', ok: null, text: paired ? `Browsers paired with this PC: ${paired}` : 'No browser paired yet — after you start plainhub agent, enter the 6-digit code it shows in PlainHub on this PC' });
+    checks.push({ id: 'paired', ok: null, text: paired ? `Browsers paired with this PC: ${paired}` : 'No browser paired yet — after you start plainhub agent, open the link it shows in your browser on this PC' });
 
     // 郵便受け（スマホから）の鍵: あるかだけ（値は見せない）。--mailbox を付けた時だけ、そのリポに届くかを GitHub に聞く
     const saved = !!(await savedToken());

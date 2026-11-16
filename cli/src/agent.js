@@ -1,5 +1,6 @@
 // plainhub agent — 自分の AI エージェント（まず Claude Code）を PlainHub の AI パネルにつなぐ（docs/design/DESIGN_byo_agent.md・この PC・読むだけ）
 //   127.0.0.1 だけで待ち、決まったサイト（Origin）から・合言葉で組になったブラウザからの質問だけを、起動したフォルダの Claude Code に渡す
+//   合言葉（YL1）: 起動ごとに作る 192 ビットのランダムな文字列。起動の表示のリンク（agentLink・Jupyter のトークン入りの URL と同じ形）で渡す
 //   Claude Code は読むだけ（Read・Grep・Glob）・フォルダの外は読めない（--restricted）・MCP もほかの設定も読まない。古くて決まりを守れない版なら動かさない
 //   Cockpit モード（--cockpit で明示した時だけ・H2a・H2b）: 本人の Claude Code の設定と、AI パネルで選んだ権限のモード（Plan／Auto）で動き、確認が要る操作は組になったブラウザの AI パネルに承認カードを出して、その答えを Claude Code に返す（/permission）
 //   質問とファイルの中身は PlainHub のサーバーを通らない（ブラウザ ↔ この PC ↔ 利用者のサブスクの Claude だけ）
@@ -16,7 +17,11 @@ export { AGENT_PORTS, ASK_TIMEOUT_MS, MAX_PROMPT, MAX_CONTENT, MAX_IMAGE_BODY } 
 export { CLAUDE_ARGS, COCKPIT_ARGS, userDefaultPermissionMode, permissionCard, systemPrompt, userContent, resolveCommand, stopAllClaude, MAX_TARGET, toolTarget, claudeRunner } from './agent-core.js';
 // 既定は本番だけ（ck-003）。STG（lab）・プレビュー・手元の配信は --origin で足す（isAllowedExtraOrigin）
 export const DEFAULT_ORIGINS = ['https://app.plainhub.dev'];
-export const PAIR_MAX_FAILURES = 5;      // 合言葉をこの回数まちがえたら、起動し直すまで組にしない（総当たりを止める）
+// 合言葉は当てずっぽうでは事実上当たらない（192 ビット）ので、まちがいで止める仕組みは無い（わざとまちがえさせて止める悪用が無い・YL1 ⑤）。
+//   回数の制限はゆるく残す: PAIR_WINDOW_MS の間にまちがいが PAIR_MAX_WRONG 回を超えたら、その間だけ 429（起動し直さなくても戻る）
+export const PAIR_KEY_BYTES = 24;
+export const PAIR_MAX_WRONG = 30;
+export const PAIR_WINDOW_MS = 60 * 1000;
 export const MAX_BODY = 256 * 1024;
 export const MAX_PAIRINGS = 20;
 export const MAX_WATCHERS = 8;          // 同時に開けておける /watch の数（ふつうはタブごとに1つ・gen-194 G3 1巡目: 上限が無く、たくさん開くと中継役のメモリを使った）
@@ -31,15 +36,15 @@ export function isAllowedExtraOrigin(origin) {
         || /^https:\/\/[a-z0-9-]{1,63}\.plainhub\.pages\.dev$/.test(origin);
 }
 
-export function newPairingCode() {
-    return String(crypto.randomInt(0, 1000000)).padStart(6, '0');
+// 合言葉（YL1 ③）: その起動の間だけ有効・起動し直したら作り直す（保存しない）。URL にそのまま入る文字だけ（base64url）
+export function newPairingKey() {
+    return crypto.randomBytes(PAIR_KEY_BYTES).toString('base64url');
 }
 
-// 合言葉を人に見せる形（ターミナルの起動の表示・つないだ後の Next の両方がここを通る）。スペースを入れずに6桁を続けて出す
-//   （前は起動時だけ「941 391」・Next は「710065」とばらばらだった・2026-10-06 オーナー「スペースなしのほうがわかりやすい」）
-//   入力はスペースあり・なしのどちらも受け付ける（/pair で空白を取り除く）
-export function showPairingCode(code) {
-    return String(code).replace(/\s/g, '');
+// つなぐリンク（YL1 ①）: # の後ろはサーバーに送られない（ブラウザの中だけ）。アプリは読んだらすぐ URL から消す（index.html の handleFragmentToken）
+//   書き方の正本はここ1か所（起動の表示・ブラウザを開く先の両方）。アプリの読み方は app/js/local-agent.js の parseAgentLink
+export function agentLink({ origin = DEFAULT_ORIGINS[0], key, port }) {
+    return `${origin}/#connect=agent&key=${encodeURIComponent(key)}&port=${port}`;
 }
 
 const sha256 = s => crypto.createHash('sha256').update(s).digest('hex');
@@ -76,12 +81,13 @@ export function memoryTokenStore() {
 //   actions: 質問に添えた画面の見た目の操作の一覧を Claude Code に渡し、呼ばれたら action の出来事にして /action の答えを返す（AX1）
 const TAKES = Object.freeze({ images: true, queue: true, watch: true, actions: true });
 
-// opts: cwd（読ませるフォルダ）・origins（受け付けるサイト）・runner（mode は runner.mode＝claudeRunner の mode）・tokens（組の鍵の置き場）・log・code（最初の合言葉）・timeoutMs・maxAnswer（テスト用・既定は agent-spec.js）・packageFile（版を読む package.json・テスト用・U1b）
-export function createAgentServer({ cwd = process.cwd(), origins = DEFAULT_ORIGINS, runner, tokens = memoryTokenStore(), log = () => {}, code = newPairingCode(), agentName = 'Claude Code', timeoutMs, maxAnswer, userSettings, actionTimeoutMs, cardActionTimeoutMs, packageFile } = {}) {
+// opts: cwd（読ませるフォルダ）・origins（受け付けるサイト）・runner（mode は runner.mode＝claudeRunner の mode）・tokens（組の鍵の置き場）・log・code（合言葉・既定は newPairingKey）・now（時計・テスト用）・timeoutMs・maxAnswer（テスト用・既定は agent-spec.js）・packageFile（版を読む package.json・テスト用・U1b）
+export function createAgentServer({ cwd = process.cwd(), origins = DEFAULT_ORIGINS, runner, tokens = memoryTokenStore(), log = () => {}, code = newPairingKey(), now = Date.now, agentName = 'Claude Code', timeoutMs, maxAnswer, userSettings, actionTimeoutMs, cardActionTimeoutMs, packageFile } = {}) {
     const allowed = new Set(origins);
     const core = createAgentCore({ runner, timeoutMs, maxAnswer, userSettings, takes: TAKES, actionTimeoutMs, cardActionTimeoutMs, packageFile });
-    let pairCode = code;
-    let failures = 0;
+    const pairCode = String(code);
+    let wrong = [];   // まちがえた時刻（PAIR_WINDOW_MS の間の分だけ）
+    const slowDown = () => { const t = now(); wrong = wrong.filter(w => t - w < PAIR_WINDOW_MS); return wrong.length >= PAIR_MAX_WRONG; };
     let port = 0;
     let watching = 0;   // 開いている /watch の数
 
@@ -109,7 +115,12 @@ export function createAgentServer({ cwd = process.cwd(), origins = DEFAULT_ORIGI
         req.on('error', () => resolve(TOO_LARGE));
     });
 
-    const server = http.createServer(async (req, res) => {
+    // 思わぬ例外で agent ごと落ちない（未処理の reject は node を止める）: その呼び出しだけ 500 か切断で終える
+    const server = http.createServer((req, res) => handle(req, res).catch(() => {
+        if (!res.headersSent) json(res, 500, { error: 'failed' });
+        else res.destroy();
+    }));
+    async function handle(req, res) {
         // 別の名前でこの番号に来た（DNS rebinding）・決まったサイト以外・Origin の無い呼び出しは、中身を見ずに断る
         const host = req.headers.host || '';
         if (host !== `127.0.0.1:${port}` && host !== `localhost:${port}`) return json(res, 403, { error: 'host' });
@@ -128,31 +139,32 @@ export function createAgentServer({ cwd = process.cwd(), origins = DEFAULT_ORIGI
 
         if (req.method === 'GET' && url === '/plainhub-agent/hello') {
             // modeInfo に受け取るもの（TAKES＝images・queue・watch）も入っている（答えの done も同じ）
-            return json(res, 200, { app: 'plainhub-agent', version: 1, events: EVENT_VERSION, agent: agentName, folder: basename(cwd), ...core.modeInfo(), readOnly: core.mode !== 'cockpit', paired: !!bearer(req) });
+            // keys: 合言葉はリンクの長い文字（YL1・前の版は6桁＝アプリは keys の無い agent に長い合言葉を送らない）
+            return json(res, 200, { app: 'plainhub-agent', version: 1, events: EVENT_VERSION, agent: agentName, folder: basename(cwd), ...core.modeInfo(), readOnly: core.mode !== 'cockpit', keys: true, paired: !!bearer(req) });
         }
         if (req.method !== 'POST' || !/^application\/json\s*(;|$)/i.test(req.headers['content-type'] || '')) return json(res, 404, { error: 'not_found' });
 
         if (url === '/plainhub-agent/pair') {
-            if (failures >= PAIR_MAX_FAILURES) return json(res, 429, { error: 'locked' });
+            if (slowDown()) return json(res, 429, { error: 'slow_down' });
             const body = await readBody(req);
-            // 本文を読む間に、ほかの接続が回数を使い切っていないか（同時に送って5回の制限を超えさせない）
-            if (failures >= PAIR_MAX_FAILURES) return json(res, 429, { error: 'locked' });
-            const given = String(body?.code ?? '').replace(/\s/g, '');
-            const ok = given.length === pairCode.length && crypto.timingSafeEqual(Buffer.from(given), Buffer.from(pairCode));
+            // 本文を読む間に、ほかの接続が回数を使い切っていないか（同時に送って制限を超えさせない）
+            if (slowDown()) return json(res, 429, { error: 'slow_down' });
+            // key（YL1）。前の版のアプリは code で送る＝どちらも同じ合言葉と比べる
+            const given = String(body?.key ?? body?.code ?? '').replace(/\s/g, '');
+            // 比べるのは両方の sha256（いつも 32 バイト）。文字数が同じでもバイト数が違う（日本語などの字）と timingSafeEqual が例外を投げ、
+            //   agent が落ちた（gen-561 G3 1巡目・前の6桁の版から）。長さの違いも時間に出さない
+            const ok = crypto.timingSafeEqual(crypto.createHash('sha256').update(given).digest(), crypto.createHash('sha256').update(pairCode).digest());
             if (!ok) {
-                failures++;
-                log(failures >= PAIR_MAX_FAILURES
-                    ? `Wrong pairing code ${failures} times — pairing is locked. Restart plainhub agent to pair again.`
-                    : `Wrong pairing code (${failures}/${PAIR_MAX_FAILURES}).`);
-                return json(res, failures >= PAIR_MAX_FAILURES ? 429 : 401, { error: failures >= PAIR_MAX_FAILURES ? 'locked' : 'wrong_code', remaining: PAIR_MAX_FAILURES - failures });
+                wrong.push(now());
+                log('A browser sent a wrong pairing key.');
+                return json(res, 401, { error: 'wrong_code' });
             }
             const token = crypto.randomBytes(32).toString('base64url');
             tokens.add(sha256(token));
-            pairCode = newPairingCode();   // 1回使った合言葉は使えない
-            log(`Paired with a browser on ${origin}. Next pairing code: ${showPairingCode(pairCode)}`);
-            return json(res, 200, { token, agent: agentName, folder: basename(cwd), ...core.modeInfo() });
+            // 合言葉はこの起動の間ずっと使える（YL1 ③・同じリンクでほかのブラウザもつなげる）
+            log(`Paired with a browser on ${origin}.`);
+            return json(res, 200, { token, agent: agentName, folder: basename(cwd), ...core.modeInfo(), keys: true });
         }
-
         if (url === '/plainhub-agent/ask') {
             if (!bearer(req)) return json(res, 401, { error: 'not_paired' });
             const body = await readBody(req, MAX_IMAGE_BODY);
@@ -219,7 +231,7 @@ export function createAgentServer({ cwd = process.cwd(), origins = DEFAULT_ORIGI
             return json(res, 200, { ok: true });
         }
         return json(res, 404, { error: 'not_found' });
-    });
+    }
 
     return {
         server,

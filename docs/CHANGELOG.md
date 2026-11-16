@@ -6,6 +6,23 @@ This project follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) an
 
 ---
 
+## [1.8.5] — 2026-11-16
+
+**Connect Your agent with a link instead of a 6-digit code**
+
+### Changed
+- plainhub agent shows a link that opens PlainHub in your browser. Click Connect there to connect. It opens the browser by itself; add --no-browser to only show the link.
+- The key in the link is new each time the agent starts, works until you stop it and is not saved.
+- The 6-digit code and the lock after 5 wrong codes are gone. Instead, after 30 wrong keys in a minute, the agent turns away tries until the minute is over.
+- The npm package page says what you need before you start: Node.js 18 or later, Claude Code signed in, and Chrome or Edge.
+
+### Fixed
+- plainhub agent no longer stops when it is sent a code as long as the right one but with other letters (such as accented letters).
+
+→ [Full release notes](https://github.com/ricrio-inc/plainhub/releases/tag/cli-v1.8.5)
+
+---
+
 ## [1.8.4] — 2026-11-12
 
 **The MCP server does not start a ledger in a repository of your whole home folder**
@@ -173,6 +190,7 @@ Until May 2026 this changelog followed the versions of the PlainHub app. These e
 
 ---
 
+[1.8.5]: https://github.com/ricrio-inc/plainhub/releases/tag/cli-v1.8.5
 [1.8.4]: https://github.com/ricrio-inc/plainhub/releases/tag/cli-v1.8.4
 [1.8.2]: https://github.com/ricrio-inc/plainhub/releases/tag/cli-v1.8.2
 [1.8.0]: https://github.com/ricrio-inc/plainhub/releases/tag/cli-v1.8.0

@@ -2,7 +2,7 @@
 
 This page is for an AI coding assistant (such as Claude Code) that a person asked to set up PlainHub's "Your agent" on their PC. "Your agent" lets the person ask their own Claude Code questions from the PlainHub AI panel (app.plainhub.dev), on this PC or from their phone. People can read the [setup guide](YOUR_AGENT.md) instead.
 
-This page matches plainhub 1.8.4.
+This page matches plainhub 1.8.5.
 
 ## What you must not do
 
@@ -25,7 +25,7 @@ Node.js 18 or later is needed. If `node` is not found or is older, stop here and
 
 ## 2. Install
 
-If `plainhub --version` doesn't work, or shows a version older than 1.8.4, run:
+If `plainhub --version` doesn't work, or shows a version older than 1.8.5, run:
 
 ```bash
 npm i -g plainhub
@@ -58,7 +58,7 @@ cd <folder>
 plainhub agent
 ```
 
-Then, in PlainHub: "Ask AI" (at the top) → "Connect your own agent" → "On this PC", and enter the 6-digit code the terminal shows. The same button is also in Settings → AI. The terminal must stay open.
+The agent shows a link and opens it in their browser; in PlainHub they click "Connect" once. If the browser didn't open, they open the link from the terminal, or paste it in PlainHub: "Ask AI" (at the top) → "Connect your own agent" → "On this PC" (the same button is also in Settings → AI). The link lets a browser use the agent: don't ask for it, copy it or show it in your answer. The terminal must stay open.
 
 From their phone: they need a private GitHub repository that only they can write to. They run `plainhub auth` themselves once (a token for only that repository, with "Contents: Read and write"). Then, in their own terminal:
 

@@ -9,13 +9,15 @@ This package is the PlainHub CLI and MCP server. Connect your own Claude Code to
 [![Try PlainHub](https://img.shields.io/badge/Try%20PlainHub-plainhub.dev-blue?style=for-the-badge)](https://plainhub.dev/)
 [![npm version](https://img.shields.io/npm/v/plainhub)](https://www.npmjs.com/package/plainhub)
 
+**Before you start:** on your PC, Node.js 18 or later, Claude Code signed in, and Chrome or Edge. If Chrome or Edge asks whether app.plainhub.dev can access apps on your device, choose **Allow** — that's how it reaches the agent on this PC (127.0.0.1).
+
 ```bash
 npm i -g plainhub
 cd ~/notes        # your folder
-plainhub agent    # shows a pairing code
+plainhub agent    # shows a link and opens it in your browser
 ```
 
-Then, in PlainHub on the same PC: **Ask AI** (at the top) → **Connect your own agent**, and enter the code.
+PlainHub opens on the same PC: click **Connect** to connect it to the agent in that folder. If the browser didn't open, open the link from the terminal, or paste it in PlainHub: **Ask AI** (at the top) → **Connect your own agent**.
 
 **[Setup guide](https://github.com/ricrio-inc/plainhub/blob/main/docs/YOUR_AGENT.md)** — from your phone, what it can read, troubleshooting.
 

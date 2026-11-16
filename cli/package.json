@@ -1,6 +1,6 @@
 {
   "name": "plainhub",
-  "version": "1.8.4",
+  "version": "1.8.5",
   "mcpName": "io.github.ricrio-inc/plainhub",
   "description": "PlainHub CLI and MCP server: connect your own Claude Code to the PlainHub AI panel, open GitHub files in PlainHub, and keep a shared ledger for AI agents and people.",
   "type": "module",
@@ -33,7 +33,9 @@
     "ai",
     "voice",
     "tts",
-    "claude"
+    "claude",
+    "claude-code",
+    "agent"
   ],
   "author": "PlainHub <npm@plainhub.dev>",
   "homepage": "https://plainhub.dev",

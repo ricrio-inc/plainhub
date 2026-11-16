@@ -27,7 +27,7 @@ AI エージェントは、発言と判断カードを、あなたのリポジ�
 
 ### 3. Your agent: 自分の Claude Code とつなぐ
 
-PlainHub の AIパネルで質問すると、あなたの PC の Claude Code が答えます。同じ PC からでも、スマホからでも聞けます。API キーは要らず、あなたの Claude のアカウントでサインインしたまま動きます。→ [Your agent の使い方](YOUR_AGENT.md)
+PlainHub の AIパネルで質問すると、あなたの PC の Claude Code が答えます。同じ PC からでも、スマホからでも聞けます。API キーは要らず、あなたの Claude のアカウントでサインインしたまま動きます。その PC には、Node.js 18 以上・サインイン済みの Claude Code・Chrome か Edge が要ります。Chrome や Edge が、app.plainhub.dev にこのデバイスのアプリへのアクセスを許すかを聞いてきたら「許可」（Allow）を選びます。PC（127.0.0.1）の agent に届くための許可です。→ [Your agent の使い方](YOUR_AGENT.md)
 
 ## 特徴
 

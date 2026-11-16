@@ -7,7 +7,7 @@ import { basename } from 'path';
 import { parseArgs } from 'util';
 import { openOptionsUsage, readOpenOption } from './cli-options.js';
 import { openSync, readSync, closeSync, fstatSync, constants as fsConstants } from 'fs';
-import { createAgentServer, claudeRunner, stopAllClaude, fileTokenStore, isAllowedExtraOrigin, AGENT_PORTS, DEFAULT_ORIGINS, showPairingCode, userDefaultPermissionMode } from './agent.js';
+import { createAgentServer, claudeRunner, stopAllClaude, fileTokenStore, isAllowedExtraOrigin, AGENT_PORTS, DEFAULT_ORIGINS, agentLink, userDefaultPermissionMode } from './agent.js';
 import { githubClient, checkMailboxRepo, isMailboxRepo, pickMailboxToken, createMailbox, MAILBOX_BRANCH } from './mailbox.js';
 import { runDoctor, doctorText, localDeps } from './doctor.js';
 import { postMessage, createDecision, checkLedger, roomLanguage, languageNote, LedgerError, LIMITS, safeText, listDecisions, listTasks, readThread, readEntry, decisionsText, tasksText, threadText, entryText, initLedger, initText, openLinkText, syncLedger, syncText, formatLedger, formatText, AGENT_DENIED_ROLES, agentDeniedRoleText } from './ledger.js';
@@ -28,7 +28,7 @@ async function openOrPrint(options, { noAuth, noOpen }) {
 
 // plainhub agent の使い方（plainhub --help の最後と plainhub agent --help の両方に出す・1か所）
 const AGENT_USAGE = `Your agent (run it in the folder you want to ask about; only this PC; read-only unless --cockpit):
-  plainhub agent [--port 47110..47114] [--origin http://localhost:<port>]
+  plainhub agent [--port 47110..47114] [--origin http://localhost:<port>] [--no-browser]
   plainhub agent --mailbox <owner/repo>
                                  Also answer from your phone through a private repository only you can access
                                  (questions and answers go to its ${MAILBOX_BRANCH} branch; uses the token for the repository's owner, from plainhub auth or gh)
@@ -377,13 +377,13 @@ async function runDoctorCommand(rest) {
 // 自分の AI エージェントを AI パネルにつなぐ（引数を読むだけ。待ち受けと Claude Code の呼び出しは agent.js）
 async function runAgent(rest) {
     const { values } = parseArgs({ args: rest, strict: true, options: {
-        port: { type: 'string' }, origin: { type: 'string', multiple: true }, forget: { type: 'boolean' }, mailbox: { type: 'string' }, cockpit: { type: 'boolean' },
+        port: { type: 'string' }, origin: { type: 'string', multiple: true }, forget: { type: 'boolean' }, mailbox: { type: 'string' }, cockpit: { type: 'boolean' }, 'no-browser': { type: 'boolean' },
     } });
     const fail = (m) => Object.assign(new Error(m), { agentError: true });
     const store = fileTokenStore();
     if (values.forget) {
         store.clear();
-        console.log('Forgot all paired browsers. They need a new pairing code next time.');
+        console.log('Forgot all paired browsers. Connect them again with the link plainhub agent shows.');
         return;
     }
     // Cockpit モード（H2a）: PC の画面でも郵便受け（スマホ）でも同じ承認カード。郵便受けの答えは本人のコミットだけ（mailbox.js）
@@ -413,7 +413,8 @@ async function runAgent(rest) {
     }
     const agent = createAgentServer({ cwd, origins, runner, tokens: store, log });
     const port = await agent.listen(ports).catch((e) => { throw fail(e.message); });
-    const code = agent.code;
+    // つなぐリンク（YL1）: --origin を足した時はその1つ目（STG・手元の配信で試す時）、ふつうは本番
+    const link = agentLink({ origin: extra[0] || DEFAULT_ORIGINS[0], key: agent.code, port });
     // Cockpit モードは、Plan と Auto があること・Auto ではコマンドも動くこと・利用者の Claude Code の設定が効くことを起動の時に言う
     const folderNote = mode === 'cockpit'
         ? `
@@ -428,8 +429,11 @@ async function runAgent(rest) {
   Listening on http://127.0.0.1:${port}  (this PC only)
   Sites:   ${origins.join(', ')}
 
-  Pairing code: ${showPairingCode(code)}
-  In PlainHub: "Ask AI" (at the top) → "Connect your own agent", then enter the code.
+  Connect PlainHub in your browser on this PC (Chrome or Edge) with this link:
+  Link: ${link}
+  Then confirm in PlainHub${values['no-browser'] ? '' : ' (it opens in your browser now; if not, open the link yourself)'}. If your browser asks to access apps on this device, choose Allow.
+  Or in PlainHub: "Ask AI" (at the top) → "Connect your own agent", and paste the link.
+  The link works until you stop this agent. Don't share it: it lets a browser use this agent.
 ${process.env.npm_command === 'exec' ? `
   Tip: next time, install once with \`npm i -g plainhub\` and run \`plainhub agent\` (npx can run a copy that a project folder brings with it).
 ` : ''}${mailbox ? `
@@ -440,6 +444,8 @@ ${process.env.npm_command === 'exec' ? `
 ` : ''}
 Press Ctrl+C to stop.`);
     if (mailbox) mailbox.run();
+    // ブラウザを開けない環境（WSL の一部・SSH の先など）もあるので、リンクは上に必ず出してある（YL1 ①）
+    if (!values['no-browser']) openInBrowser(link).catch(() => {});
     // 止めるとき（Ctrl+C・ウィンドウを閉じる）は、答えている途中の Claude Code も止めてから終わる
     //   Windows は画面のない子に Ctrl+C が届かず、親が終わっても子が残るため（SIGBREAK は Windows の Ctrl+Break）
     let stopping = false;

@@ -27,7 +27,7 @@ Your agents write their messages and decision cards as Markdown files in `.agent
 
 ### 3. Your agent — connect your own Claude Code
 
-Ask in the PlainHub AI panel, and Claude Code on your own PC answers — from the same PC or from your phone. No API key needed: it runs signed in with your own Claude account. → [Your agent](docs/YOUR_AGENT.md)
+Ask in the PlainHub AI panel, and Claude Code on your own PC answers — from the same PC or from your phone. No API key needed: it runs signed in with your own Claude account. On that PC you need Node.js 18 or later, Claude Code signed in, and Chrome or Edge. If Chrome or Edge asks whether app.plainhub.dev can access apps on your device, choose Allow — that's how it reaches the agent on your PC (127.0.0.1). → [Your agent](docs/YOUR_AGENT.md)
 
 ## What's inside
 
